@@ -95,8 +95,9 @@ As a guide, downloading the data from the NOAA server to an Amazon EC2 instance
 took me the better part of a day (mostly because I did it in small chunks to
 avoid hitting FTP connection limits). Once I had the raw data on an EBS volume
 it took about 3 hours to copy it into memory on an `r3.8xlarge` instance (32
-virtual CPUs and 244GB RAM, with 200GB mounted as tmpfs), then process it with
-16 recompress jobs running in parallel. Your mileage may vary.
+virtual CPUs and 244GB RAM, with 200GB mounted as tmpfs), process it with
+16 recompress jobs running in parallel, then copy the output to my own S3
+bucket. Your mileage may vary.
  
 ## To Do
 
