@@ -74,12 +74,6 @@ def main():
             # Lots of stations are missing coordinates, so default to region D
             region = 'D'
         print "{0}\t{1}".format(station, region)
-    # As well as the stations in the list, NCDC uses a placeholder station
-    # ID of 999999-99999 for observations from ships at sea etc. Since this
-    # "station" has a very large number of observations associated with it,
-    # each with their own coordinates, we mark it as belonging to a separate
-    # region E in case users want all stations in region D but not this one.
-    print "999999-99999\tE"  
 
 if __name__ == "__main__":
     main()
