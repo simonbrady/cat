@@ -5,7 +5,7 @@ from datetime import datetime
 import glob
 import os
 import stat
-import subprocess
+from subprocess import PIPE, Popen
 import sys
 
 # Command line arguments
@@ -86,18 +86,16 @@ def create_output_files():
         output_file = None
         try:
             output_file = open(output_filename, "w")
-            gzip = subprocess.Popen(["gzip", "-cd"] + item[1][1],
-                                    stdout=subprocess.PIPE,
-                                    stderr=subprocess.PIPE, bufsize=-1)
-            bzip2 = subprocess.Popen(["bzip2", "-c", "-9"], stdin=gzip.stdout,
-                                     stdout=output_file, stderr=subprocess.PIPE)
+            gzip = Popen(["gzip", "-cd"] + item[1][1], stdout=PIPE,
+                         stderr=PIPE, bufsize=-1)
+            bzip2 = Popen(["bzip2", "-c", "-9"], stdin=gzip.stdout,
+                          stdout=output_file, stderr=PIPE)
             log("gzip returned {0}, bzip2 returned {1}".
-                format(subprocess.Popen.wait(gzip),
-                       subprocess.Popen.wait(bzip2)))
+                format(Popen.wait(gzip), Popen.wait(bzip2)))
             if gzip.returncode != 0:
-                sys.stdout.write(subprocess.Popen.communicate(gzip)[1])
+                sys.stdout.write(Popen.communicate(gzip)[1])
             if bzip2.returncode != 0:
-                sys.stdout.write(subprocess.Popen.communicate(bzip2)[1])
+                sys.stdout.write(Popen.communicate(bzip2)[1])
             output_file.close()
         except Exception as e:
             log("Error writing {0}: {1}".format(output_filename, str(e)))
