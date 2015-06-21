@@ -188,7 +188,7 @@ def compress_files():
             chunk += 1
     # Sort in ascending order of input size
     work_list.sort(key=lambda x: x[3])
-    # Assign compression work to compress_workers as they become available
+    # Assign compression work to workers as they become available
     while len(work_list) > 0:
         # Wait for a free worker task slot
         while len(compress_workers) == args.workers:
