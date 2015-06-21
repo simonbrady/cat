@@ -1,5 +1,27 @@
 #!/usr/bin/env python
 
+# Combine downloaded NCDC data files by CCAFS region and recompress them as
+# bzip2 archives, one file per region. The station-to-region mapping is driven
+# by a lookup file created by gen_station_regions.py (see that files for an
+# explanation of CCAFS region codes).
+#
+# Because the large number of input files for one region can exceed kernel
+# limits on the length of a process argument list, we proceed as follows:
+#
+#  1. Scan the NCDC input directories for each year of interest, and for each
+#     file found record its pathname and size under the appropriate region
+#     key in the input_files dictionary.
+#
+#  2. For each region, read and recompress its input files in chunks of 20000
+#     (by default) to an intermediate bzip2 file.
+#
+#  3. Concatenate the intermediate files for each region into a single output
+#     file. This works because bzip2 treats concatenated archives as a single
+#     valid archive.
+#
+# Steps 2 and 3 are performed in parallel using a configurable number of
+# asynchronous subprocesses.
+
 import argparse
 from datetime import datetime
 import glob
@@ -74,6 +96,8 @@ def fatal(msg):
     sys.stderr.write(msg + "\n")
     sys.exit(1)
 
+# Load the station-to-region mapping file created by gen_station_regions.py
+# into a dictionary keyed by station ID
 def load_region_map():
     global region_map
     try:
@@ -90,6 +114,12 @@ def load_region_map():
     except Exception as e:
         fatal("Error reading map file {0}: {1}".format(args.region_map, str(e)))
 
+# Scan a subdirectory of NCDC files for the given year and add details for each
+# file to the appropriate region key of input_files. For each file we record
+# its absolute pathname and size in bytes as a tuple appended to the region's
+# value. Region keys and value lists are created as needed. Any station ID
+# missing from region_map (and hence from isd-history.csv on the NCDC FTP site)
+# is assigned to pseudo-region E.
 def scan_input(year):
     global input_files
     log("Scanning {0}/{1}".format(args.source_dir, year))

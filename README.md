@@ -21,7 +21,7 @@ web services
 * Client-side presentation using the
 [Google Maps JavaScript API](https://developers.google.com/maps/documentation/javascript/)
 
-The unimaginative project acronym is thanks to
+The unimaginative project name was inspired by
 [these little guys](http://www.hikari.org.nz/stuff/random/kitten_helpers.jpg)
 who enjoy climbing onto my lap when I'm trying to code.
 
@@ -62,43 +62,10 @@ resolution of 0.001 degrees, while the finest-grained CCAFS data is on a
 Once the back-end is up and running with actual data, other ideas will
 hopefully present themselves.
 
-## Preprocessing
+## Processing Steps
 
-Due to the size of the datasets and the speed of New Zealand domestic broadband
-it's easiest to host the project in the
-[Amazon Web Services](http://aws.amazon.com/) cloud. The CCAFS data is already
-available as an
-[AWS public dataset](http://aws.amazon.com/datasets/0241269495883982), but the
-NCDC data is published as 500,000+ small files on the NOAA FTP site
-(`ftp://ftp.ncdc.noaa.gov/pub/data/noaa/`, which Markdown
-[won't link to](https://github.com/jch/html-pipeline/issues/187)).
-To avoid downloading
-these files every time I need them, the first step in the project is to
-script a bulk download and restructuring of the raw data. The NCDC files are
-gzipped text, one file per station per year, so after downloading them I
-combine all the records for a station into a single file then recompress
-them with bzip2 (this reduces 81 GB of downloaded data to 49 GB, and since
-bzip2 is splittable it's much more Hadoop-friendly than gzip).
+1. [NCDC Download](ncdc_download)
 
-The scripts to do this are in the `ncdc_download` directory. In addition to
-recompressing, the second stage sorts the output
-files into bins based on the CCAFS region containing the station (CCAFS data
-is available in "tiles" covering 50 degrees of latitude by 60 degress of
-longitude, from the north pole to 60 degrees south). This binning makes it
-easy for Hadoop jobs to operate on data one region at a time, which is
-especially useful when combining NCDC data with a CCAFS tile. The
-[gen\_station\_regions.py](ncdc\_download/gen\_station\_regions.py) script
-reads the NCDC station list `isd-history.csv`
-and produces a station-to-region lookup file to drive the binning process. 
-
-As a guide, downloading the data from the NOAA server to an Amazon EC2 instance
-took me the better part of a day (mostly because I did it in small chunks to
-avoid hitting FTP connection limits). Once I had the raw data on an EBS volume
-it took about 3 hours to copy it into memory on an `r3.8xlarge` instance (32
-virtual CPUs and 244GB RAM, with 200GB mounted as tmpfs), process it with
-16 recompress jobs running in parallel, then copy the output to my own S3
-bucket. Your mileage may vary.
- 
 ## To Do
 
 Lots and lots of stuff to finish off, tidy up, and publish on GitHub. Stay
