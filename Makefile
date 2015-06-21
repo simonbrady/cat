@@ -1,10 +1,7 @@
-MARKDOWN=markdown2
+include common.mk
 
 all: doc
 
 doc: README.html
-
-%.html: %.md
-	$(MARKDOWN) $< > $@
 
 .PHONY: doc
