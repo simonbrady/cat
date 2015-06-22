@@ -1,5 +1,9 @@
 include ../common.mk
 
-all: doc
+# Empty rules invoked by top-level make
+all clean test:
 
-doc: README.html
+doc: $(README)
+
+distclean:
+	-$(RM) $(README)

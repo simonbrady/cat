@@ -2,11 +2,13 @@ include common.mk
 
 SUBDIRS=ncdc_download
 
-all: doc
+# Pass these targets straight on to subdirectories
+all clean test:
+	$(process-subdirs)
 
-doc: README.html $(SUBDIRS)
-	for f in $(SUBDIRS); do \
-		$(MAKE) -C $$f $@; \
-	done
+doc: $(README)
+	$(process-subdirs)
 
-.PHONY: doc $(SUBDIRS)
+distclean:
+	-$(RM) $(README)
+	$(process-subdirs)
