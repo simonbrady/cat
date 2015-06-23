@@ -7,7 +7,7 @@
   <version>1.0.0-SNAPSHOT</version>
   <name>NCDC Record Count</name>
   <url>https://github.com/simonbrady/cat</url>
-
+  <description>Count records per station in NCDC data</description>
 
   <build>
     <plugins>
@@ -45,5 +45,4 @@
     	<classifier>hadoop2</classifier>
     </dependency>
   </dependencies>
-  <description>Count records per station in NCDC data</description>
 </project>
