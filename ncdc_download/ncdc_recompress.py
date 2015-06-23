@@ -2,7 +2,7 @@
 
 # Combine downloaded NCDC data files by CCAFS region and recompress them as
 # bzip2 archives, one file per region. The station-to-region mapping is driven
-# by a lookup file created by gen_station_regions.py (see that files for an
+# by a lookup file created by gen_station_regions.py (see that file for an
 # explanation of CCAFS region codes).
 #
 # Because the large number of input files for one region can exceed kernel
