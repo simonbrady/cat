@@ -1,6 +1,6 @@
 include common.mk
 
-SUBDIRS=ncdc_download
+SUBDIRS=ncdc_count ncdc_download
 
 # Pass these targets straight on to subdirectories
 all clean test:

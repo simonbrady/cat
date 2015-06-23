@@ -4,6 +4,7 @@
 README=README.html
 
 # Standard command-line tools
+MAVEN=mvn
 RM=rm
 
 # Markdown to HTML converter
