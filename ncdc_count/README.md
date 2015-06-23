@@ -1,7 +1,8 @@
 # NCDC Record Count
 
 This is a simple Hadoop job to run over the downloaded NCDC data, heavily based
-on the examples in Tom White, _Hadoop: the Definitive Guide_ (3rd ed: O'Reilly,
+on the examples in Tom White,
+[_Hadoop: The Definitive Guide_](http://hadoopbook.com/) (3rd ed: O'Reilly,
 2012). It counts records by station ID (the concatenation of a station's USAF
 catalogue number and WBAN identifier, e.g. 029070-99999) and produces
 tab-delimited ID-count pairs as output. Its main purpose is to sanity-check the
