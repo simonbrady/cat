@@ -65,6 +65,7 @@ hopefully present themselves.
 ## Processing Steps
 
 1. [NCDC Download](ncdc_download)
+2. [NCDC Record Count](ncdc_count)
 
 ## To Do
 

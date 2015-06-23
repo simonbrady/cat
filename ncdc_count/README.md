@@ -45,7 +45,7 @@ communicate with each other). The output of this command is the new cluster ID:
     "ClusterId": "j-1AB234CDEFG56"
 }
 ```
-Save this as shell variable then check that the cluster is starting:
+Save this as a shell variable then check that the cluster is starting:
 ```
 id=j-1AB234CDEFG56
 
