@@ -112,7 +112,7 @@ Name="NCDC record count",Type=CUSTOM_JAR,Jar=$S3/code/ncdc_count-VERSION.jar,\
 Args="/in,$S3/out,1"
 ```
 Once you're finished, remember to shut the cluster down unless you like giving
-all you money to Amazon:
+all your money to Amazon:
 ```
 aws emr terminate-clusters --cluster-ids $id
 ```
