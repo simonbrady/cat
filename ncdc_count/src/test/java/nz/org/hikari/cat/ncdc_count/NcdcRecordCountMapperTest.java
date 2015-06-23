@@ -1,9 +1,6 @@
 package nz.org.hikari.cat.ncdc_count;
 
 import java.io.IOException;
-
-import nz.org.hikari.cat.ncdc_count.NcdcRecordCountMapper;
-
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mrunit.mapreduce.MapDriver;
