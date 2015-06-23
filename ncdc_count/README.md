@@ -10,11 +10,10 @@ data and Hadoop configuration.
 The code can be built in Eclipse or from the command line with Maven (this is
 automated by the [Makefile](Makefile) so you can build everything from the
 top-level project directory). The output is a JAR archive,
-`target/ncdc_count-VERSION.jar` to submit to Hadoop. I've used Hadoop 2.4.0
-as bundled with the
+`target/ncdc_count-VERSION.jar`. I've used Hadoop 2.4.0 as bundled with the
 [Elastic MapReduce AMI 3.7.0](http://docs.aws.amazon.com/ElasticMapReduce/latest/DeveloperGuide/ami-versions-supported.html),
-but the code is so simple that any Hadoop version should work (you'll just need
-to update the Maven dependency in [pom.xml](pom.xml)).
+but the code is so simple that any recent Hadoop version should work (you'll
+just need to update the dependencies in [pom.xml](pom.xml)).
 
 To run the job from the command line, install and configure the
 [AWS CLI](http://aws.amazon.com/documentation/cli/) then set up your
