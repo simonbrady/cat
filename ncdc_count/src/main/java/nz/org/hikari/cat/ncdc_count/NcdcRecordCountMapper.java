@@ -16,7 +16,7 @@ public class NcdcRecordCountMapper
 			throws IOException, InterruptedException {
 		String line = value.toString();
 		String id = line.substring(4, 10) + "-" + line.substring(10, 15);
-		context.write(new Text(id), new LongWritable(1));
+		context.write(new Text(id), new LongWritable(1L));
 	}
 
 }
