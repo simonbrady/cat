@@ -13,9 +13,9 @@ import org.apache.hadoop.util.ToolRunner;
 
 // Driver for NCDC record count MapReduce job
 //
-// Args: <input location> <output location>
+// Args: <input location> <output location> [number of reduce tasks]
 //
-//       e.g. s3://BUCKETNAME/ncdc/data/ /out
+//       e.g. s3://BUCKETNAME/ncdc/data/ /out 1
 //
 //       (note that /out will be created in HDFS, not the local filesystem,
 //       and that it must not exist prior to running the job).
@@ -41,7 +41,8 @@ public class NcdcRecordCount extends Configured implements Tool {
 		job.setMapperClass(NcdcRecordCountMapper.class);
 		job.setCombinerClass(LongSumReducer.class);
 		job.setReducerClass(LongSumReducer.class);
-
+		if (args.length == 3)
+			job.setNumReduceTasks(Integer.parseInt(args[2]));
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(LongWritable.class);
 		

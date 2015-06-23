@@ -25,7 +25,7 @@ aws emr create-default-roles
 ```
 Next, start up a small cluster:
 ```
-S3=s3://BUCKETNAME/ncdc/
+S3=s3://BUCKETNAME/ncdc
 
 aws emr create-cluster --ami-version 3.7.0 --use-default-roles \
 --ec2-attributes \
@@ -57,7 +57,7 @@ you can get a simplified view of them with
 
 While the cluster is starting, copy the code to S3 so EMR can find it:
 ```
-aws s3 cp target/ncdc_count-VERSION.jar s3://BUCKETNAME/ncdc/code/
+aws s3 cp target/ncdc_count-VERSION.jar $S3/code/
 ```
 Assuming you've downloaded the NCDC data into your own S3 bucket, you now have
 two choices: run the job using S3 as its input source, or copy the data to
@@ -66,12 +66,12 @@ job like this:
 ```
 aws emr add-steps --cluster-id $id --steps \
 Name="NCDC record count",Type=CUSTOM_JAR,Jar=$S3/code/ncdc_count-VERSION.jar,\
-Args="-Dmapreduce.job.reduces=1,$S3/ncdc/data/,$S3/out"
+Args="$S3/data,$S3/out,1"
 ```
-The second and third arguments are the map source and reduce destination
-respectively. The bulk of the work is in the map phase since we use a combiner
-to do most of the reduction (accumulating record counts) before the reducers
-even start, so the first argument overrides the default number of reducers to
+The first two arguments are the map source and reduce destination respectively.
+The bulk of the work is in the map phase since we use a combiner to do most of
+the reduction (accumulating record counts) before the reducers even start,
+so the optional third argument overrides the default number of reducers to
 save excess book-keeping. Running the job for the entire NCDC dataset will take
 a long time on a small cluster, so to try it out you can either create a subset
 of the data or specify a single year as input, e.g. `$S3/ncdc/data/1901`.
@@ -87,10 +87,15 @@ aws emr describe-step --cluster-id $id --step-id $step
 ```
 Once it completes, copy the output from S3:
 ```
-aws s3 cp --recursive $S3/out .
+aws s3 cp --recursive $S3/out out
 
 sort out/part* | less
 ```
+**NB**: By design, Hadoop jobs will fail if their output directory already
+exists. Before re-running the job be sure to delete the output in S3:
+```
+aws s3 rm --recursive $S3/out
+``` 
 To copy data to HDFS then count it there, first submit an
 [S3DistCp](http://docs.aws.amazon.com/ElasticMapReduce/latest/DeveloperGuide/UsingEMR_s3distcp.html)
 step:
@@ -104,5 +109,5 @@ specify as input for the record count:
 ```
 aws emr add-steps --cluster-id $id --steps \
 Name="NCDC record count",Type=CUSTOM_JAR,Jar=$S3/code/ncdc_count-VERSION.jar,\
-Args="-Dmapreduce.job.reduces=1,/in,$S3/out"
+Args="/in,$S3/out,1"
 ```
