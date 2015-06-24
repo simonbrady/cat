@@ -115,7 +115,7 @@ def load_region_map():
         fatal("Error reading map file {0}: {1}".format(args.region_map, str(e)))
 
 # Scan a subdirectory of NCDC files for the given year and add details for each
-# file to the appropriate region key of input_files. For each file we record
+# file to the appropriate region key of input_details. For each file we record
 # its absolute pathname and size in bytes as a tuple appended to the region's
 # value. Region keys and value lists are created as needed. Any station ID
 # missing from region_map (and hence from isd-history.csv on the NCDC FTP site)
