@@ -10,7 +10,7 @@
 #
 #  1. Scan the NCDC input directories for each year of interest, and for each
 #     file found record its pathname and size under the appropriate region
-#     key in the input_files dictionary.
+#     key in the input_details dictionary.
 #
 #  2. For each region, read and recompress its input files in chunks of 20000
 #     (by default) to an intermediate bzip2 file.
@@ -37,8 +37,8 @@ args = None
 # Station ID to region map
 region_map = {}
 
-# Input files for each region encountered
-input_files = {}
+# Input files and sizes for each region encountered
+input_details = {}
 
 # Active compression worker tasks, stored as tuples of (gzip process, bzip2
 # process, output filename, output file)
@@ -121,7 +121,7 @@ def load_region_map():
 # missing from region_map (and hence from isd-history.csv on the NCDC FTP site)
 # is assigned to pseudo-region E.
 def scan_input(year):
-    global input_files
+    global input_details
     log("Scanning {0}/{1}".format(args.source_dir, year))
     try:
         for filename in glob.glob("{0}/{1}/*.gz".format(args.source_dir, year)):
@@ -129,25 +129,33 @@ def scan_input(year):
             station = os.path.basename(filename)[:-8]
             region = region_map.get(station, "E")
             size = os.stat(filename)[stat.ST_SIZE]
-            if input_files.get(region) == None:
-                input_files[region] = []
-            input_files[region].append((filename, size))
+            if input_details.get(region) == None:
+                input_details[region] = []
+            input_details[region].append((filename, size))
     except Exception as e:
         fatal("Error processing {0}/{1}: {1}".
               format(args.source_dir,year, str(e)))
 
-def add_compress_worker(output_filename, files):
+# Start a compression worker task to decompress the listed input files and
+# recompress them as a single bzip2 archive, then append the task details to
+# compress_workers to be waited on by wait_for_compress_worker()
+def add_compress_worker(input_filenames, output_filename):
     global compress_workers
     try:
         output_file = open(output_filename, "w")
-        gzip = Popen(["gzip", "-cd"] + list(files), stdout=PIPE, stderr=PIPE,
-                     bufsize=-1)
-        bzip2 = Popen(["bzip2", "-c", "-9"], stdin=gzip.stdout,
+        gzip = Popen(["gzip", "-cd"] + list(input_filenames), stdout=PIPE,
+                     stderr=PIPE, bufsize=-1)
+        bzip2 = Popen(["bzip2", "-c9"], stdin=gzip.stdout,
                       stdout=output_file, stderr=PIPE)
         compress_workers.append((gzip, bzip2, output_filename, output_file))
     except Exception as e:
         fatal("Error creating {0}: {1}".format(output_filename, str(e)))
 
+# Wait for a compression worker task to complete then report its completion
+# status. All tasks in compress_workers are polled until one completes. Since
+# any failure in this process is likely to have a fundamental cause, e.g. wrong
+# input directory given or output disk full, we quit with a fatal error should
+# any single worker fail.
 def wait_for_compress_worker():
     global compress_workers
     completed = False
@@ -158,22 +166,58 @@ def wait_for_compress_worker():
         time.sleep(args.poll_interval)
         for worker in compress_workers:
             gzip, bzip2, output_filename, output_file = worker
-            if Popen.poll(gzip) == None and Popen.poll(bzip2) == None:
+            # Get subprocess return codes, or None if they're still running
+            gzip_rc = Popen.poll(gzip)
+            bzip2_rc = Popen.poll(bzip2)
+            # If both subprocesses are still running, try the next worker task
+            if gzip_rc == None and bzip2_rc == None:
                 continue
+            # At least one subprocess for this task has completed, but the
+            # other may still be running. If one of them has completed
+            # successfully then wait for the other to finish.
+            if gzip_rc == 0:
+                bzip2_rc = Popen.wait(bzip2)
+            elif bzip2_rc == 0:
+                gzip_rc = Popen.wait(gzip)
+            # In some failure modes one subprocess will fail but leave the
+            # other running, so check for this and terminate the hung process
+            # if necessary.
+            if gzip_rc != None and gzip_rc != 0 and bzip2_rc == None:
+                Popen.terminate(bzip2)
+                bzip2_rc = 0
+            elif bzip2_rc != None and bzip2_rc != 0 and gzip_rc == None:
+                Popen.terminate(gzip)
+                gzip_rc = 0
+            # Either way both processes should now have finished, so close the
+            # output file
+            assert gzip_rc != None and bzip2_rc != None
             output_file.close()
-            log("Created {0}: gzip returned {1}, bzip2 returned {2}".
-                format(output_filename, Popen.wait(gzip), Popen.wait(bzip2)))
-            if gzip.returncode != 0:
-                sys.stdout.write(Popen.communicate(gzip)[1])
-            if bzip2.returncode != 0:
-                sys.stdout.write(Popen.communicate(bzip2)[1])
+            # If a subprocess failed, include its stderr output in the error
+            # message as we die
+            if gzip_rc != 0:
+                fatal("gzip failed creating {0}: {1}".
+                      format(output_filename, Popen.communicate(gzip)[1]))
+            if bzip2_rc != 0:
+                fatal("bzip2 failed creating {0}: {1}".
+                      format(output_filename, Popen.communicate(bzip2)[1]))
             compress_workers.remove(worker)
+            log("Created {0}".format(output_filename))
             completed = True
 
+# For each region, decompress all the gzipped input files for stations in that
+# region then append them and recompress with bzip2. Ideally we'd process all
+# the inputs at once but this would lead to to gzip being called with an
+# argument list too long for the underlying execve() call, so we process the
+# input list in chunks and leave them for concat_files() to merge later.
+# Recompression is done with asynchronous subprocesses, up to the user-
+# specified maximum number of workers, where each worker task is similar to
+#
+#   gzip -cd input1.gz input2.gz ... inputN.gz | bzip2 -c9 > output.bz2
+#
 def compress_files():
-    global input_files
+    global input_details
     work_list = []
-    for (region, file_list) in input_files.items():
+    for (region, file_list) in input_details.items():
         start = 0
         chunk = 0
         while start < len(file_list):
@@ -181,35 +225,47 @@ def compress_files():
                 format("{0}_{1:03d}".format(region, chunk))
             end = start + min(len(file_list) - start, args.file_count)
             count = end - start
-            files = (x[0] for x in file_list[start:end])
+            input_filenames = (x[0] for x in file_list[start:end])
             size = sum(x[1] for x in file_list[start:end])
-            work_list.append((output_filename, files, count, size))
+            work_list.append((output_filename, input_filenames, count, size))
             start = end
             chunk += 1
     # Sort in ascending order of input size
     work_list.sort(key=lambda x: x[3])
-    # Assign compression work to workers as they become available
+    # Assign compression work to workers as they become available, in
+    # descending order of input size. Assigning work this way achieves a near-
+    # optimal balance across workers (see the discussion of the "longest
+    # processing time first" rule in Sedgewick and Wayne, "Algorithms"
+    # (4th ed: Addison Wesley, 2011), p349).
     while len(work_list) > 0:
         # Wait for a free worker task slot
         while len(compress_workers) == args.workers:
             wait_for_compress_worker()
-        output_filename, files, count, size = work_list.pop()
+        output_filename, input_filenames, count, size = work_list.pop()
         log("Creating {0} from {1} input files ({2} bytes)".
             format(output_filename, count, size))
-        add_compress_worker(output_filename, files)
+        add_compress_worker(input_filenames, output_filename)
     # No more compression to do, so wait for remaining workers to finish
     while len(compress_workers) > 0:
         wait_for_compress_worker()
 
-def add_concat_worker(output_filename, files):
+# Start a worker task to concatenate the listed input files together as a
+# single output file, then append the task details to concat_workers to be
+# waited on by wait_for_concat_worker()
+def add_concat_worker(input_filenames, output_filename):
     global concat_workers
     try:
         output_file = open(output_filename, "w")
-        cat = Popen(["cat"] + list(files), stdout=output_file, stderr=PIPE)
-        concat_workers.append((cat, files, output_filename, output_file))
+        cat = Popen(["cat"] + list(input_filenames), stdout=output_file,
+                    stderr=PIPE)
+        concat_workers.append((cat, input_filenames, output_filename,
+                               output_file))
     except Exception as e:
         fatal("Error creating {0}: {1}".format(output_filename, str(e)))
 
+# Wait for a concatenation worker task to complete, report its completion
+# status, and remove its input files. All tasks in concat_workers are polled
+# until one completes.
 def wait_for_concat_worker():
     global concat_workers
     completed = False
@@ -219,44 +275,60 @@ def wait_for_concat_worker():
                 format(len(concat_workers)), True)
         time.sleep(args.poll_interval)
         for worker in concat_workers:
-            cat, files, output_filename, output_file = worker
-            if Popen.poll(cat) == None:
+            cat, input_filenames, output_filename, output_file = worker
+            # Get subprocess return code, or None if it's still running
+            cat_rc = Popen.poll(cat)
+            # Try next worker if this one hasn't finished yet
+            if cat_rc == None:
                 continue
             output_file.close()
-            log("Created {0}: cat returned {1}".
-                format(output_filename, Popen.wait(cat)))
-            if cat.returncode != 0:
-                sys.stdout.write(Popen.communicate(cat)[1])
-            file_list = " ".join(files)
+            # If the process failed then quit and include its stderr in the
+            # error message
+            if cat_rc != 0:
+                fatal("cat failed creating {0}: {1}".
+                      format(output_filename, Popen.communicate(cat)[1]))
+            log("Created " + output_filename)
+            # Now delete the input files
+            input_filenames.sort()
+            file_list = " ".join(input_filenames)
             try:
-                check_call(["rm"] + files)
-                if args.verbose:
-                    log("Removed " + file_list)
-                else:
-                    log("Removed {0} intermediate files".format(len(files)))
+                check_call(["rm"] + input_filenames)
+                log("Removed " + file_list)
             except Exception as e:
                 fatal("Error removing {0}: {1}".format(file_list, str(e)))
             concat_workers.remove(worker)
             completed = True
 
+# For each region we've processed, concatenate its intermediate .bz2 files into
+# a single archive then delete them. This is equivalent to (for exanple)
+#
+#   cat ncdc_A1_000.bz2 ncdc_A1_001.bz2 > ncdc_A1.bz2
+#   rm ncdc_A1_000.bz2 ncdc_A1_001.bz2
+#
+# Concatenation is done using asynchronous subprocesses, up to the user-
+# specified maximum number of worker tasks.
 def concat_files():
     global concat_workers
     work_list = []
-    for region in input_files.keys():
+    for region in input_details.keys():
+        input_filenames = glob.glob(args.output_pattern.
+                                    format("{0}_*".format(region)))
         output_filename = args.output_pattern.format(region)
-        files = glob.glob(args.output_pattern.format("{0}_*".format(region)))
-        work_list.append((output_filename, files))
-    # Sort in ascending order of number of files 
-    work_list.sort(key=lambda x: len(x[1]))
-    # Assign concatenation work to workers as they become available
+        work_list.append((input_filenames, output_filename))
+    # Sort work list in ascending order of number of input_filenames
+    work_list.sort(key=lambda x: len(x[0]))
+    # Assign concatenation work to workers as they become available, starting
+    # with the longest list of inputs and ending with the shortest to keep
+    # things balanced
     while len(work_list) > 0:
         # Wait for a free worker task slot
         while len(concat_workers) == args.workers:
             wait_for_concat_worker()
-        output_filename, files = work_list.pop()
+        input_filenames, output_filename = work_list.pop()
         log("Concatenating {0} input files to {1}".
-            format(len(files), output_filename))
-        add_concat_worker(output_filename, files)
+            format(len(input_filenames), output_filename))
+        # Start the new worker
+        add_concat_worker(input_filenames, output_filename)
     # No more concatenation, so wait for remaining workers to finish
     while len(concat_workers) > 0:
         wait_for_concat_worker()

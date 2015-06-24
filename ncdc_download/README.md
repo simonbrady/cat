@@ -11,9 +11,10 @@ NCDC data is published as 500,000+ small files on the NOAA FTP site
 
 To avoid downloading
 these files every time I need them, the first step in the process is to
-script a bulk download and restructuring of the raw data. The NCDC files are
-gzipped text, one file per station per year, so after downloading them I
-add all the records for a station to a single file corresponding to the
+script a [bulk download](ncdc_download.sh) and restructuring of the raw data.
+The NCDC files are
+gzipped text, one file per station per year, so after downloading them we
+combine all the records for a station in a single file corresponding to the
 station's CCAFS region (CCAFS data is available in "tiles" covering 50 degrees
 of latitude by 60 degress of longitude, from the north pole to 60 degrees
 south). The [gen\_station\_regions.py](gen\_station\_regions.py)
@@ -22,8 +23,7 @@ station-to-region lookup file to drive the binning process. This binning makes
 it easy for Hadoop jobs to operate on data one region at a time, which is
 especially useful when combining NCDC data with a CCAFS tile.
 
-The region files
-are then recompressed with bzip2, which reduces 81 GB of downloaded data to
-49 GB. Since bzip2 is splittable it's much more Hadoop-friendly than gzip:
-the large region files can be split into 128 MB HDFS blocks for parallel
-processing by Hadoop map tasks.
+The region files are then [recompressed](ncdc_recompress.py) with bzip2,
+which reduces 81 GB of downloaded data to 49 GB. Since bzip2 is splittable it's
+much more Hadoop-friendly than gzip: the large region files can be split into
+128 MB HDFS blocks for parallel processing by Hadoop map tasks.
