@@ -325,10 +325,20 @@ def concat_files():
         while len(concat_workers) == args.workers:
             wait_for_concat_worker()
         input_filenames, output_filename = work_list.pop()
-        log("Concatenating {0} input files to {1}".
-            format(len(input_filenames), output_filename))
-        # Start the new worker
-        add_concat_worker(input_filenames, output_filename)
+        # If there's only a single file, just rename it
+        if len(input_filenames) == 1:
+            log("Renaming {0} to {1}".
+                format(input_filenames[0], output_filename))
+            try:
+                os.rename(input_filenames[0], output_filename)
+            except Exception as e:
+                fatal("Error renaming {0} to {1}: {2}".
+                      format(input_filenames[0], output_filename, str(e)))
+        else:
+            log("Concatenating {0} input files to {1}".
+                format(len(input_filenames), output_filename))
+            # Start the new worker
+            add_concat_worker(input_filenames, output_filename)
     # No more concatenation, so wait for remaining workers to finish
     while len(concat_workers) > 0:
         wait_for_concat_worker()
