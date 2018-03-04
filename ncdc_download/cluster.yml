@@ -1,0 +1,79 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: EMR cluster for NCDC download
+
+Parameters:
+  CoreEbsVolumeSize:
+    Type: Number
+    Default: 100
+    Description: Core node EBS volume size in GB
+  CoreInstanceCount:
+    Type: Number
+    Default: 2
+    Description: Number of core nodes
+  CoreInstanceType:
+    Type: String
+    Default: m4.large
+    Description: Core node instance type
+  KeyPair:
+    Type: String
+    Default: home-us-east-1
+    Description: SSH key pair name
+  MasterInstanceType:
+    Type: String
+    Default: m4.large
+    Description: Master node instance type
+  MasterSecurityGroup:
+    Type: String
+    Default: sg-1ff63b65
+    Description: Security group to attach to master node
+  SubnetId:
+    Type: String
+    Default: subnet-1a1ace30
+    Description: Subnet to launch cluster in
+
+Resources:
+  Cluster:
+    Type: AWS::EMR::Cluster
+    Properties: 
+      Instances:
+        AdditionalMasterSecurityGroups:
+          - Ref: MasterSecurityGroup
+        CoreInstanceGroup:
+          EbsConfiguration:
+            EbsBlockDeviceConfigs:
+              - VolumeSpecification:
+                  SizeInGB:
+                    Ref: CoreEbsVolumeSize
+                  VolumeType: gp2
+            EbsOptimized: true
+          InstanceCount:
+            Ref: CoreInstanceCount
+          InstanceType:
+            Ref: CoreInstanceType
+        Ec2KeyName:
+          Ref: KeyPair
+        Ec2SubnetId:
+          Ref: SubnetId
+        MasterInstanceGroup:
+          InstanceCount: 1
+          InstanceType:
+            Ref: MasterInstanceType
+      JobFlowRole: EMR_EC2_DefaultRole
+      LogUri:
+        Fn::Sub: s3://aws-logs-${AWS::AccountId}-${AWS::Region}/elasticmapreduce/
+      Name: NCDC Download
+      ReleaseLabel: emr-5.12.0
+      ServiceRole: EMR_DefaultRole
+      Tags:
+        - Key: Name
+          Value: NCDC Download
+
+Outputs:
+  ClusterId:
+    Description: Cluster ID"
+    Value:
+      Ref: Cluster
+  MasterPublicDNS:
+    Description: Master node public DNS name
+    Value:
+      Fn::Sub: ${Cluster.MasterPublicDNS}

@@ -1,0 +1,52 @@
+[
+    {
+        "Name": "Generate file list",
+        "Type": "STREAMING",
+        "ActionOnFailure": "CANCEL_AND_WAIT",
+        "Args": [
+            "-D",
+            "mapreduce.job.running.map.limit=3",
+            "-D",
+            "mapreduce.job.reduces=0",
+            "-files",
+            "s3://stage.hikari.org.nz/ncdc/code/download_mapper1.py",
+            "-mapper",
+            "download_mapper1.py",
+            "-reducer",
+            "/bin/true",
+            "-input",
+            "%INPUT%",
+            "-output",
+            "/user/hadoop/files"
+        ]
+    },
+    {
+        "Name": "Download files",
+        "Type": "STREAMING",
+        "ActionOnFailure": "CONTINUE",
+        "Args": [
+            "-D",
+            "mapreduce.job.running.map.limit=3",
+            "-D",
+            "mapreduce.job.reduces=0",
+            "-D",
+            "mapreduce.output.fileoutputformat.compress=true",
+            "-D",
+            "mapreduce.output.fileoutputformat.compress.codec=org.apache.hadoop.io.compress.BZip2Codec",
+            "-files",
+            "s3://stage.hikari.org.nz/ncdc/code/download_mapper2.py",
+            "-libjars",
+            "/home/hadoop/ncdc_download.jar",
+            "-mapper",
+            "download_mapper2.py",
+            "-reducer",
+            "/bin/true",
+            "-input",
+            "/user/hadoop/files",
+            "-output",
+            "%OUTPUT%",
+            "-outputformat",
+            "nz.org.hikari.cat.ncdc_download.NcdcDownloadOutputFormat"
+        ]
+    }
+]

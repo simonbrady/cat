@@ -1,0 +1,11 @@
+[
+    {
+        "Name": "Enable Hadoop debugging",
+        "Type": "CUSTOM_JAR",
+        "ActionOnFailure": "CONTINUE",
+        "Jar": "command-runner.jar",
+        "Args": [
+            "state-pusher-script"
+        ]
+    }
+]
