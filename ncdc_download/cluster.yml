@@ -67,10 +67,11 @@ Resources:
       Tags:
         - Key: Name
           Value: NCDC Download
+      VisibleToAllUsers: true
 
 Outputs:
   ClusterId:
-    Description: Cluster ID"
+    Description: Cluster ID
     Value:
       Ref: Cluster
   MasterPublicDNS:
