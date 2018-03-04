@@ -1,9 +1,65 @@
-include ../common.mk
+# Range of years to download data for
+FROM ?= 1901
+TO ?= 1910
 
-# Empty rules invoked by top-level make
-all clean test:
+# Environment-specific details
+BUCKET ?= s3://stage.hikari.org.nz/ncdc
+CODE ?= $(BUCKET)/code
+INPUT ?= $(BUCKET)/input/years
+OUTPUT ?= $(BUCKET)/data/$(FROM)-$(TO)
+KEYPAIR=$(HOME)/keys/home-us-east-1.pem
+REGION ?= us-east-1
+STACK ?= ncdc-download
 
-doc: $(README)
+# Commands to use
+AWS=aws
+CF=$(AWS) cloudformation --region $(REGION)
+EMR=$(AWS) emr --region $(REGION)
+S3=$(AWS) s3
+GRADLE=gradle
+SED=sed
 
-distclean:
-	-$(RM) $(README)
+# Helper for commands that take a cluster ID
+CLUSTER=$$($(CF) describe-stacks --stack-name $(STACK) \
+	--query "Stacks[0].Outputs[?OutputKey=='ClusterId'].OutputValue" --output text)
+
+.PHONY: cluster terminate upload download debug proxy
+
+all: cluster
+
+cluster:
+	@echo Creating EMR cluster
+	$(CF) create-stack --stack-name $(STACK) --template-body file://./cluster.yml
+	$(CF) wait stack-create-complete --stack-name $(STACK)
+	@echo Creation complete
+
+terminate:
+	@echo Terminating EMR cluster
+	$(CF) delete-stack --stack-name $(STACK)
+	$(CF) wait stack-delete-complete --stack-name $(STACK)
+	@echo Cluster terminated
+
+upload:
+	@echo Building and uploading code
+	$(GRADLE) jar
+	for f in download_mapper1.py download_mapper2.py build/libs/ncdc_download.jar; do \
+		$(S3) cp $$f $(CODE)/$$(basename $$f); \
+	done
+	$(EMR) ssh --cluster-id $(CLUSTER) --key-pair-file $(KEYPAIR) \
+		--command "hadoop fs -copyToLocal -f $(CODE)/ncdc_download.jar ."
+
+download:
+	@echo Starting download of NCDC data for $(FROM)-$(TO) to $(OUTPUT)
+	t=$$(mktemp); seq $(FROM) $(TO) > $$t; $(S3) cp $$t $(INPUT)
+	$(EMR) ssh --cluster-id $(CLUSTER) --key-pair-file $(KEYPAIR) \
+		--command "hadoop fs -rm -R -f files"
+	$(EMR) add-steps --cluster-id $(CLUSTER) \
+		--steps "$$($(SED) -e 's|%INPUT%|$(INPUT)|;s|%OUTPUT%|$(OUTPUT)|' download_steps.json)"
+
+debug:
+	@echo Running step to enable EMR debugging
+	$(EMR) add-steps --cluster-id $(CLUSTER) --steps file://./debugging_step.json
+
+proxy:
+	@echo Setting up SOCKS proxy connection to cluster
+	$(EMR) socks --cluster-id $(CLUSTER) --key-pair-file $(KEYPAIR)
