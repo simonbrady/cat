@@ -3,7 +3,7 @@ FROM ?= 1901
 TO ?= 1910
 
 # Environment-specific details
-BUCKET ?= s3://stage.hikari.org.nz/ncdc
+BUCKET ?= s3://ncdc.hikari.org.nz
 CODE ?= $(BUCKET)/code
 INPUT ?= $(BUCKET)/input/years
 OUTPUT ?= $(BUCKET)/data/$(FROM)-$(TO)
