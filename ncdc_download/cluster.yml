@@ -68,6 +68,17 @@ Resources:
         - Key: Name
           Value: NCDC Download
       VisibleToAllUsers: true
+  EnableDebuggingStep:
+    Type: AWS::EMR::Step
+    Properties:
+      Name: Enable Hadoop debugging
+      ActionOnFailure: CONTINUE
+      HadoopJarStep:
+        Jar: command-runner.jar
+        Args:
+          - state-pusher-script
+      JobFlowId:
+        Ref: Cluster
 
 Outputs:
   ClusterId:

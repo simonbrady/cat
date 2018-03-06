@@ -63,10 +63,6 @@ download:
 	$(EMR) add-steps --cluster-id $(CLUSTER) \
 		--steps "$$($(SED) -e 's|%INPUT%|$(INPUT)|;s|%OUTPUT%|$(OUTPUT)|' download_steps.json)"
 
-debug:
-	@echo Running step to enable EMR debugging
-	$(EMR) add-steps --cluster-id $(CLUSTER) --steps file://./debugging_step.json
-
 proxy:
 	@echo Setting up SOCKS proxy connection to cluster
 	$(EMR) socks --cluster-id $(CLUSTER) --key-pair-file $(KEYPAIR)
