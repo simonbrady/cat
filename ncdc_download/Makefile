@@ -49,11 +49,10 @@ terminate:
 upload:
 	@echo Building and uploading code
 	$(GRADLE) jar
-	for f in download_mapper1.py download_mapper2.py build/libs/ncdc_download.jar; do \
+	$(EMR) put --cluster-id $(CLUSTER) --key-pair-file $(KEYPAIR) --src build/libs/ncdc_download.jar
+	for f in download_mapper1.py download_mapper2.py; do \
 		$(S3) cp $$f $(CODE)/$$(basename $$f); \
 	done
-	$(EMR) ssh --cluster-id $(CLUSTER) --key-pair-file $(KEYPAIR) \
-		--command "hadoop fs -copyToLocal -f $(CODE)/ncdc_download.jar ."
 
 download:
 	@echo Starting download of NCDC data for $(FROM)-$(TO) to $(OUTPUT)
