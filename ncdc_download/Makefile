@@ -61,7 +61,7 @@ download:
 	$(EMR) ssh --cluster-id $(CLUSTER) --key-pair-file $(KEYPAIR) \
 		--command "hadoop fs -rm -R -f files"
 	$(EMR) add-steps --cluster-id $(CLUSTER) \
-		--steps "$$($(SED) -e 's|%INPUT%|$(INPUT)|;s|%OUTPUT%|$(OUTPUT)|' download_steps.json)"
+		--steps "$$($(SED) -e 's|%CODE%|$(CODE)|;s|%INPUT%|$(INPUT)|;s|%OUTPUT%|$(OUTPUT)|' download_steps.json)"
 
 proxy:
 	@echo Setting up SOCKS proxy connection to cluster
