@@ -11,6 +11,9 @@ KEYPAIR=$(HOME)/keys/home-us-east-1.pem
 REGION ?= us-east-1
 STACK ?= ncdc-download
 
+# Optional template parameters in form key=value, e.g. "CoreInstanceType=c4.large CoreInstanceCount=1"
+PARAMETERS ?= ""
+
 # Commands to use
 AWS=aws
 CF=$(AWS) cloudformation --region $(REGION)
@@ -23,13 +26,17 @@ SED=sed
 CLUSTER=$$($(CF) describe-stacks --stack-name $(STACK) \
 	--query "Stacks[0].Outputs[?OutputKey=='ClusterId'].OutputValue" --output text)
 
+# Expand parameters into the format expected by the CloudFormation CLI
+CF_PARAMETERS=--parameters $$(echo $(PARAMETERS) | \
+	$(SED) -ne 's/\([^ =]*\)=\([^ =]*\)\( *\)/ParameterKey=\1,ParameterValue=\2\3/gp')
+
 .PHONY: cluster terminate upload download debug proxy
 
 all: cluster
 
 cluster:
 	@echo Creating EMR cluster
-	$(CF) create-stack --stack-name $(STACK) --template-body file://./cluster.yml
+	$(CF) create-stack --stack-name $(STACK) --template-body file://./cluster.yml $(CF_PARAMETERS)
 	$(CF) wait stack-create-complete --stack-name $(STACK)
 	@echo Creation complete
 
