@@ -30,9 +30,17 @@ CLUSTER=$$($(CF) describe-stacks --stack-name $(STACK) \
 CF_PARAMETERS=--parameters $$(echo $(PARAMETERS) | \
 	$(SED) -ne 's/\([^ =]*\)=\([^ =]*\)\( *\)/ParameterKey=\1,ParameterValue=\2\3/gp')
 
-.PHONY: cluster terminate upload download debug proxy
+.PHONY: build clean cluster terminate upload download proxy
 
-all: cluster
+all: build
+
+build:
+	@echo Building Java code
+	$(GRADLE) jar
+
+clean:
+	@echo Cleaning build directory
+	$(GRADLE) clean
 
 cluster:
 	@echo Creating EMR cluster
@@ -46,9 +54,8 @@ terminate:
 	$(CF) wait stack-delete-complete --stack-name $(STACK)
 	@echo Cluster terminated
 
-upload:
-	@echo Building and uploading code
-	$(GRADLE) jar
+upload: build
+	@echo Uploading code
 	$(EMR) put --cluster-id $(CLUSTER) --key-pair-file $(KEYPAIR) --src build/libs/ncdc_download.jar
 	for f in download_mapper1.py download_mapper2.py; do \
 		$(S3) cp $$f $(CODE)/$$(basename $$f); \
