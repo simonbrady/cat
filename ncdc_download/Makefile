@@ -46,7 +46,7 @@ cluster:
 	@echo Creating EMR cluster
 	$(CF) create-stack --stack-name $(STACK) --template-body file://./cluster.yml $(CF_PARAMETERS)
 	$(CF) wait stack-create-complete --stack-name $(STACK)
-	@echo Creation complete
+	@echo Cluster $(CLUSTER) created
 
 terminate:
 	@echo Terminating EMR cluster
