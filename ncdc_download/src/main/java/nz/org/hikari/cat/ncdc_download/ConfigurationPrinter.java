@@ -34,7 +34,7 @@ public class ConfigurationPrinter extends Configured implements Tool {
 		}
 		return 0;
 	}
-	
+
 	public static void main(String[] args) throws Exception {
 		System.exit(ToolRunner.run(new ConfigurationPrinter(), args));
 	}
