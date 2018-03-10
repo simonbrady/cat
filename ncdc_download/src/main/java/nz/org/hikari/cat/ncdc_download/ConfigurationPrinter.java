@@ -1,5 +1,6 @@
 package nz.org.hikari.cat.ncdc_download;
 
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
@@ -25,7 +26,7 @@ public class ConfigurationPrinter extends Configured implements Tool {
 	@Override
 	public int run(String[] args) throws Exception {
 		Configuration conf = getConf();
-		TreeMap<String, String> map = new TreeMap<>();
+		Map<String, String> map = new TreeMap<>();
 		for (Entry<String, String> entry : conf) {
 			map.put(entry.getKey(), entry.getValue());
 		}
