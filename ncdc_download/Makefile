@@ -7,7 +7,7 @@ BUCKET ?= s3://ncdc.hikari.org.nz
 CODE ?= $(BUCKET)/code
 INPUT ?= $(BUCKET)/input/years
 OUTPUT ?= $(BUCKET)/data/$(FROM)-$(TO)
-KEYPAIR=$(HOME)/keys/home-us-east-1.pem
+KEYPAIR ?= $(HOME)/keys/home-us-east-1.pem
 REGION ?= us-east-1
 STACK ?= ncdc-download
 
