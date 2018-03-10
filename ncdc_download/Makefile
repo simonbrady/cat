@@ -63,7 +63,7 @@ upload: build
 
 download:
 	@echo Starting download of NCDC data for $(FROM)-$(TO) to $(OUTPUT)
-	t=$$(mktemp); seq $(FROM) $(TO) > $$t; $(S3) cp $$t $(INPUT)
+	t=$$(mktemp); seq $(FROM) $(TO) > $$t; $(S3) cp $$t $(INPUT); rm $$t
 	$(EMR) ssh --cluster-id $(CLUSTER) --key-pair-file $(KEYPAIR) \
 		--command "hadoop fs -rm -R -f files"
 	$(EMR) add-steps --cluster-id $(CLUSTER) \
