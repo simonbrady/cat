@@ -8,6 +8,7 @@ CODE ?= $(BUCKET)/code
 INPUT ?= $(BUCKET)/input/years
 OUTPUT ?= $(BUCKET)/data/$(FROM)-$(TO)
 KEYPAIR ?= $(HOME)/keys/home-us-east-1.pem
+MAPS ?= 12
 REGION ?= us-east-1
 STACK ?= ncdc-download
 
@@ -66,8 +67,12 @@ download:
 	t=$$(mktemp); seq $(FROM) $(TO) > $$t; $(S3) cp $$t $(INPUT); rm $$t
 	$(EMR) ssh --cluster-id $(CLUSTER) --key-pair-file $(KEYPAIR) \
 		--command "hadoop fs -rm -R -f files"
-	$(EMR) add-steps --cluster-id $(CLUSTER) \
-		--steps "$$($(SED) -e 's|%CODE%|$(CODE)|;s|%INPUT%|$(INPUT)|;s|%OUTPUT%|$(OUTPUT)|' download_steps.json)"
+	$(EMR) add-steps --cluster-id $(CLUSTER) --steps "$$($(SED) \
+		-e 's|%CODE%|$(CODE)|' \
+		-e 's|%INPUT%|$(INPUT)|' \
+		-e 's|%MAPS%|$(MAPS)|' \
+		-e 's|%OUTPUT%|$(OUTPUT)|' \
+		download_steps.json)"
 
 proxy:
 	@echo Setting up SOCKS proxy connection to cluster

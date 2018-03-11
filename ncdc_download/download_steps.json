@@ -26,6 +26,8 @@
         "ActionOnFailure": "CONTINUE",
         "Args": [
             "-D",
+            "mapreduce.job.maps=%MAPS%",
+            "-D",
             "mapreduce.job.running.map.limit=3",
             "-D",
             "mapreduce.job.reduces=0",
