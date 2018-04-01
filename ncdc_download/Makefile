@@ -9,6 +9,7 @@ INPUT ?= $(BUCKET)/input/years
 OUTPUT ?= $(BUCKET)/data/$(FROM)-$(TO)
 KEYPAIR ?= $(HOME)/keys/home-us-east-1.pem
 MAPS ?= 12
+MAP_MEMORY_MB ?= 3072
 REGION ?= us-east-1
 STACK ?= ncdc-download
 
@@ -71,6 +72,7 @@ download:
 		-e 's|%CODE%|$(CODE)|' \
 		-e 's|%INPUT%|$(INPUT)|' \
 		-e 's|%MAPS%|$(MAPS)|' \
+		-e 's|%MAP_MEMORY_MB%|$(MAP_MEMORY_MB)|' \
 		-e 's|%OUTPUT%|$(OUTPUT)|' \
 		download_steps.json)"
 

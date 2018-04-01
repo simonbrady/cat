@@ -30,6 +30,8 @@
             "-D",
             "mapreduce.job.running.map.limit=3",
             "-D",
+            "mapreduce.map.memory.mb=%MAP_MEMORY_MB%",
+            "-D",
             "mapreduce.job.reduces=0",
             "-D",
             "mapreduce.output.fileoutputformat.compress=true",
