@@ -26,6 +26,10 @@ Parameters:
     Type: String
     Default: sg-1ff63b65
     Description: Security group to attach to master node
+  ReleaseLabel:
+    Type: String
+    Default: emr-5.12.1
+    Description: EMR release label to install
   SubnetId:
     Type: String
     Default: subnet-1a1ace30
@@ -62,7 +66,8 @@ Resources:
       LogUri:
         Fn::Sub: s3://aws-logs-${AWS::AccountId}-${AWS::Region}/elasticmapreduce/
       Name: NCDC Download
-      ReleaseLabel: emr-5.12.0
+      ReleaseLabel:
+        Ref: ReleaseLabel
       ServiceRole: EMR_DefaultRole
       Tags:
         - Key: Name
