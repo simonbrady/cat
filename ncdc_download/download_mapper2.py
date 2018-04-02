@@ -13,7 +13,7 @@ ftp.login()
 for line in sys.stdin:
     (year, filename) = line.strip().split()
     for i in range(retries):
-        sys.stderr.write('reporter:status:Processing file %s/%s (attempt %d of %d)\n' % (year, filename, i + 1, retries))
+        sys.stderr.write('reporter:status:Processing file %s/%s (FTP attempt %d of %d)\n' % (year, filename, i + 1, retries))
         data = bytearray()
         try:
             ftp.retrbinary('RETR %s/%s/%s' % (base, year, filename), data.extend)

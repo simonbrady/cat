@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
-from ftplib import FTP
+import ftplib
 import sys
 
 host = 'ftp.ncdc.noaa.gov'
 base = '/pub/data/noaa'
 
-ftp = FTP(host)
+ftp = ftplib.FTP(host)
 ftp.login()
 for line in sys.stdin:
     year = line.strip()
