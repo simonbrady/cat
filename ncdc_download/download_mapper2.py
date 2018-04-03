@@ -4,6 +4,7 @@ import ftplib
 import gzip
 import os
 import sys
+from datetime import datetime
 
 host = 'ftp.ncdc.noaa.gov'
 base = '/pub/data/noaa'
@@ -15,7 +16,7 @@ def connect(host):
     return ftp
 
 def status(msg):
-    sys.stderr.write('%s\n' % msg)
+    sys.stderr.write('%s %s\n' % (datetime.utcnow().isoformat(), msg))
     sys.stderr.write('reporter:status:%s\n' % msg)
 
 ftp = connect(host)
