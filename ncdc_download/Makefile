@@ -78,4 +78,5 @@ download:
 
 proxy:
 	@echo Setting up SOCKS proxy connection to cluster
+	$(EMR) ssh --cluster-id $(CLUSTER) --key-pair-file $(KEYPAIR) --command hostname
 	$(EMR) socks --cluster-id $(CLUSTER) --key-pair-file $(KEYPAIR)
