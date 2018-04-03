@@ -29,7 +29,7 @@ for line in sys.stdin:
         except ftplib.all_errors as error:
             sys.stderr.write('%s\n' % error)
             if str(error).startswith('421'):
-                sys.stderr.write('Attemptng reconnection after idle timeout\n')
+                sys.stderr.write('Attempting reconnection after idle timeout\n')
                 try:
                     ftp = connect(host)
                     sys.stderr.write('Reconnection succeeded\n')
