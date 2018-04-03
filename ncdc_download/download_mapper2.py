@@ -25,8 +25,8 @@ for line in sys.stdin:
         for record in gzip.open(filename, 'rb'):
             print('%s\t%s' % (year, record.decode('ISO-8859-1').strip()))
             count += 1
-        sys.stderr.write('reporter:counter:NCDC Download,%s,%d\n' % (year, count))
         os.remove(filename)
+        sys.stderr.write('reporter:counter:NCDC Download,%s,%d\n' % (year, count))
         break
     else:
         ftp.quit()
