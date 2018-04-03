@@ -14,10 +14,6 @@ def connect(host):
     ftp.login()
     return ftp
 
-def fail(ftp):
-    ftp.quit()
-    sys.exit(1)
-    
 def status(msg):
     sys.stderr.write('%s\n' % msg)
     sys.stderr.write('reporter:status:%s\n' % msg)
@@ -34,12 +30,11 @@ for line in sys.stdin:
             if str(error).startswith('421'):
                 sys.stderr.write('Attemptng reconnection after idle timeout\n')
                 try:
-                    ftp.quit()
                     ftp = connect(host)
                     sys.stderr.write('Reconnection succeeded\n')
-                except ftplib.all_errors as nested_error:
-                    sys.stderr.write('%s\n' % nested_error)
-                    fail(ftp)
+                except ftplib.all_errors as error:
+                    sys.stderr.write('%s\n' % error)
+                    sys.exit(1)
             continue
         status('Decompressing file %s/%s' % (year, filename))
         count = 0
@@ -50,5 +45,5 @@ for line in sys.stdin:
         sys.stderr.write('reporter:counter:NCDC Download,%s,%d\n' % (year, count))
         break
     else:
-        fail(ftp)
+        sys.exit(1)
 ftp.quit()
