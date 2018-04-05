@@ -14,26 +14,21 @@ Parameters:
     Type: String
     Default: m4.large
     Description: Core node instance type
-  KeyPair:
-    Type: String
-    Default: home-us-east-1
-    Description: SSH key pair name
   MasterInstanceType:
     Type: String
     Default: m4.large
     Description: Master node instance type
-  MasterSecurityGroup:
-    Type: String
-    Default: sg-1ff63b65
-    Description: Security group to attach to master node
   ReleaseLabel:
     Type: String
     Default: emr-5.12.1
     Description: EMR release label to install
-  SubnetId:
-    Type: String
-    Default: subnet-1a1ace30
-    Description: Subnet to launch cluster in
+
+Mappings:
+  RegionSpecific:
+    us-east-1:
+      KeyPair: home-us-east-1
+      MasterSecurityGroup: sg-1ff63b65
+      SubnetId: subnet-1a1ace30
 
 Resources:
   Cluster:
@@ -41,7 +36,10 @@ Resources:
     Properties:
       Instances:
         AdditionalMasterSecurityGroups:
-          - Ref: MasterSecurityGroup
+          - Fn::FindInMap:
+              - RegionSpecific
+              - Ref: AWS::Region
+              - MasterSecurityGroup
         CoreInstanceGroup:
           EbsConfiguration:
             EbsBlockDeviceConfigs:
@@ -55,9 +53,15 @@ Resources:
           InstanceType:
             Ref: CoreInstanceType
         Ec2KeyName:
-          Ref: KeyPair
+          Fn::FindInMap:
+            - RegionSpecific
+            - Ref: AWS::Region
+            - KeyPair
         Ec2SubnetId:
-          Ref: SubnetId
+          Fn::FindInMap:
+            - RegionSpecific
+            - Ref: AWS::Region
+            - SubnetId
         MasterInstanceGroup:
           InstanceCount: 1
           InstanceType:
