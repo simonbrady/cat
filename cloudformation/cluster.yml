@@ -4,7 +4,7 @@ Description: Climate Analysis Tool EMR cluster
 Parameters:
   CoreEbsVolumeSize:
     Type: Number
-    Default: 100
+    Default: 32
     Description: Core node EBS volume size in GB
   CoreInstanceCount:
     Type: Number
