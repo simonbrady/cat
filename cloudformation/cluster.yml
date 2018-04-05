@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: EMR cluster for NCDC download
+Description: Climate Analysis Tool EMR cluster
 
 Parameters:
   CoreEbsVolumeSize:
@@ -38,7 +38,7 @@ Parameters:
 Resources:
   Cluster:
     Type: AWS::EMR::Cluster
-    Properties: 
+    Properties:
       Instances:
         AdditionalMasterSecurityGroups:
           - Ref: MasterSecurityGroup
@@ -65,13 +65,13 @@ Resources:
       JobFlowRole: EMR_EC2_DefaultRole
       LogUri:
         Fn::Sub: s3://aws-logs-${AWS::AccountId}-${AWS::Region}/elasticmapreduce/
-      Name: NCDC Download
+      Name: Climate Analysis Tool
       ReleaseLabel:
         Ref: ReleaseLabel
       ServiceRole: EMR_DefaultRole
       Tags:
         - Key: Name
-          Value: NCDC Download
+          Value: Climate Analysis Tool
       VisibleToAllUsers: true
   EnableDebuggingStep:
     Type: AWS::EMR::Step

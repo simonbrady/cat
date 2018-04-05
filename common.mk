@@ -1,25 +1,18 @@
 # Common definitions included by all Makefiles
 
-# Standard README file for doc target, built from README.md by default
-README=README.html
+# Settings shared across sub-projects
+REGION ?= ap-southeast-2
+KEYPAIR ?= $(HOME)/keys/home-$(REGION).pem
+STACK ?= cat-emr-cluster
 
-# Standard command-line tools
-MAVEN=mvn
-RM=rm
+# Commands to use
+AWS=aws
+CF=$(AWS) cloudformation --region $(REGION)
+EMR=$(AWS) emr --region $(REGION)
+S3=$(AWS) s3
+GRADLE=gradle
+SED=sed
 
-# Markdown to HTML converter
-MARKDOWN=markdown_py
-
-# Build target in all subdirectories
-define process-subdirs
-	for f in $(SUBDIRS); do \
-		$(MAKE) -C $$f $@; \
-	done
-endef
-
-# Pattern rules
-%.html: %.md
-	$(MARKDOWN) $< > $@
-
-# Tell make about phony targets
-.PHONY: doc clean distclean
+# Helper for AWS CLI commands that take a cluster ID
+CLUSTER=$$($(CF) describe-stacks --stack-name $(STACK) \
+	--query "Stacks[0].Outputs[?OutputKey=='ClusterId'].OutputValue" --output text)
