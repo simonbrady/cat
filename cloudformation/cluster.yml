@@ -25,6 +25,10 @@ Parameters:
 
 Mappings:
   RegionSpecific:
+    ap-southeast-2:
+      KeyPair: home-ap-southeast-2
+      MasterSecurityGroup: sg-04c6e263
+      SubnetId: subnet-fab3cb8d
     us-east-1:
       KeyPair: home-us-east-1
       MasterSecurityGroup: sg-1ff63b65
