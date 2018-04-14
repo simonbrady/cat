@@ -20,7 +20,7 @@ Parameters:
     Description: Master node instance type
   ReleaseLabel:
     Type: String
-    Default: emr-5.12.1
+    Default: emr-5.13.0
     Description: EMR release label to install
 
 Mappings:

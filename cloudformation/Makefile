@@ -1,11 +1,15 @@
 include ../common.mk
 
-# Optional template parameters in form key=value, e.g. "CoreInstanceType=c4.large CoreInstanceCount=1"
-PARAMETERS ?= ""
-
-# Expand parameters into the format expected by the CloudFormation CLI
-CF_PARAMETERS=--parameters $$(echo $(PARAMETERS) | \
-	$(SED) -ne 's/\([^ =]*\)=\([^ =]*\)\( *\)/ParameterKey=\1,ParameterValue=\2\3/gp')
+# Core node EBS volume size in GB
+CORE_EBS_SIZE ?= 32
+# Number of core nodes
+CORE_COUNT ?= 2
+# Core node instance type
+CORE_TYPE ?= m4.large
+# Master node instance type
+MASTER_TYPE ?= m4.large
+# EMR release label to install
+RELEASE_LABEL ?= emr-5.13.0
 
 .PHONY: cluster terminate proxy
 
@@ -13,7 +17,12 @@ all: cluster
 
 cluster:
 	@echo Creating EMR cluster
-	$(CF) create-stack --stack-name $(STACK) --template-body file://./cluster.yml $(CF_PARAMETERS)
+	$(CF) create-stack --stack-name $(STACK) --template-body file://./cluster.yml --parameters \
+		ParameterKey=CoreEbsVolumeSize,ParameterValue=$(CORE_EBS_SIZE) \
+		ParameterKey=CoreInstanceCount,ParameterValue=$(CORE_COUNT) \
+		ParameterKey=CoreInstanceType,ParameterValue=$(CORE_TYPE) \
+		ParameterKey=MasterInstanceType,ParameterValue=$(MASTER_TYPE) \
+		ParameterKey=ReleaseLabel,ParameterValue=$(RELEASE_LABEL)
 	$(CF) wait stack-create-complete --stack-name $(STACK)
 	@echo Cluster $(CLUSTER) created
 
