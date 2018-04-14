@@ -23,6 +23,12 @@ Parameters:
     Default: emr-5.13.0
     Description: EMR release label to install
 
+Conditions:
+  NoCoreEbsVolumes:
+    Fn::Equals:
+      - Ref: CoreEbsVolumeSize
+      - 0
+
 Mappings:
   RegionSpecific:
     ap-southeast-2:
@@ -46,12 +52,15 @@ Resources:
               - MasterSecurityGroup
         CoreInstanceGroup:
           EbsConfiguration:
-            EbsBlockDeviceConfigs:
-              - VolumeSpecification:
-                  SizeInGB:
-                    Ref: CoreEbsVolumeSize
-                  VolumeType: gp2
-            EbsOptimized: true
+            Fn::If:
+              - NoCoreEbsVolumes
+              - Ref: AWS::NoValue
+              - EbsBlockDeviceConfigs:
+                  - VolumeSpecification:
+                      SizeInGB:
+                        Ref: CoreEbsVolumeSize
+                      VolumeType: gp2
+                EbsOptimized: true
           InstanceCount:
             Ref: CoreInstanceCount
           InstanceType:
