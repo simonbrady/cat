@@ -1,18 +1,13 @@
 include ../common.mk
 
-# Keep version in sync with pom.xml
-VERSION=1.0.0-SNAPSHOT
-TARGET=ncdc_count-$(VERSION).jar
+.PHONY: build clean upload
 
-all: $(TARGET)
+all: build
 
-$(TARGET):
-	$(MAVEN) package
+build:
+	@echo Building Java code
+	$(GRADLE) jar
 
-clean test:
-	$(MAVEN) $@
-	
-doc: $(README)
-
-distclean: clean
-	$(RM) $(README)
+clean:
+	@echo Cleaning build directory
+	$(GRADLE) clean
