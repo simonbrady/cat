@@ -9,6 +9,8 @@ INPUT ?= $(BUCKET)/input/years
 OUTPUT ?= $(BUCKET)/data/$(FROM)-$(TO)
 MAPS ?= 12
 MAP_MEMORY_MB ?= 3072
+COPY_SOURCE ?= $(OUTPUT)
+COPY_DEST ?= /user/hadoop/$(FROM)-$(TO)
 
 .PHONY: build clean upload download
 
@@ -35,9 +37,16 @@ download:
 	$(EMR) ssh --cluster-id $(CLUSTER) --key-pair-file $(KEYPAIR) \
 		--command "hadoop fs -rm -R -f files"
 	$(EMR) add-steps --cluster-id $(CLUSTER) --steps "$$($(SED) \
-		-e 's|%CODE%|$(CODE)|' \
-		-e 's|%INPUT%|$(INPUT)|' \
-		-e 's|%MAPS%|$(MAPS)|' \
-		-e 's|%MAP_MEMORY_MB%|$(MAP_MEMORY_MB)|' \
-		-e 's|%OUTPUT%|$(OUTPUT)|' \
+		-e "s|%CODE%|$(CODE)|" \
+		-e "s|%INPUT%|$(INPUT)|" \
+		-e "s|%MAPS%|$(MAPS)|" \
+		-e "s|%MAP_MEMORY_MB%|$(MAP_MEMORY_MB)|" \
+		-e "s|%OUTPUT%|$(OUTPUT)|" \
 		download_steps.json)"
+
+copy:
+	@echo Copying from $(COPY_SOURCE) to $(COPY_DEST)
+	$(EMR) add-steps --cluster-id $(CLUSTER) --steps "$$($(SED) \
+		-e "s|%COPY_SOURCE%|$(COPY_SOURCE)|" \
+		-e "s|%COPY_DEST%|$(COPY_DEST)|" \
+		copy_step.json)"

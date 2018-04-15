@@ -1,0 +1,15 @@
+[
+    {
+        "Name": "Copy files",
+        "Type": "CUSTOM_JAR",
+        "ActionOnFailure": "CONTINUE",
+        "Jar": "command-runner.jar",
+        "Args": [
+            "s3-dist-cp",
+            "--src",
+            "%COPY_SOURCE%",
+            "--dest",
+            "%COPY_DEST%"
+        ]
+    }
+]
