@@ -1,5 +1,6 @@
 include ../common.mk
 
+# Input can be a space-separated list of paths
 INPUT ?= $(BUCKET)/data/1901-1910
 OUTPUT ?= $(BUCKET)/out
 
@@ -24,8 +25,8 @@ upload: build
 count:
 	@echo Writing count of NCDC records in $(INPUT) to $(OUTPUT)
 	$(EMR) add-steps --cluster-id $(CLUSTER) --steps "$$($(SED) \
-		-e 's|%CODE%|$(CODE)|' \
-		-e 's|%INPUT%|$(INPUT)|' \
-		-e 's|%JAR%|$(JAR)|' \
-		-e 's|%OUTPUT%|$(OUTPUT)|' \
+		-e "s|%CODE%|$(CODE)|" \
+		-e "s|%INPUT%|$$(echo $(INPUT) | $(SED) -e 's/ /","/g')|" \
+		-e "s|%JAR%|$(JAR)|" \
+		-e "s|%OUTPUT%|$(OUTPUT)|" \
 		count_step.json)"

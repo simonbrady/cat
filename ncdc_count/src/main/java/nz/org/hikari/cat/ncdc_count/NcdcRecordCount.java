@@ -13,7 +13,7 @@ import org.apache.hadoop.util.ToolRunner;
 
 // Driver for NCDC record count MapReduce job
 //
-// Args: <input location> <output location>
+// Args: <input location ...> <output location>
 //
 //       e.g. s3://BUCKETNAME/ncdc/data/ /out
 //
