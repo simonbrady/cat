@@ -12,7 +12,7 @@ all: build
 
 build:
 	@echo Building Java code
-	$(GRADLE) jar
+	$(GRADLE) build
 
 clean:
 	@echo Cleaning build directory
