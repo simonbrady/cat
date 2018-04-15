@@ -1,6 +1,11 @@
 include ../common.mk
 
+INPUT ?= $(BUCKET)/data/1901-1910
+OUTPUT ?= $(BUCKET)/out
+
 .PHONY: build clean upload
+
+JAR=ncdc_count.jar
 
 all: build
 
@@ -11,3 +16,16 @@ build:
 clean:
 	@echo Cleaning build directory
 	$(GRADLE) clean
+
+upload: build
+	@echo Uploading code
+	$(S3) cp build/libs/$(JAR) $(CODE)/$(JAR)
+
+count:
+	@echo Writing count of NCDC records in $(INPUT) to $(OUTPUT)
+	$(EMR) add-steps --cluster-id $(CLUSTER) --steps "$$($(SED) \
+		-e 's|%CODE%|$(CODE)|' \
+		-e 's|%INPUT%|$(INPUT)|' \
+		-e 's|%JAR%|$(JAR)|' \
+		-e 's|%OUTPUT%|$(OUTPUT)|' \
+		count_step.json)"

@@ -1,0 +1,13 @@
+[
+    {
+        "Name": "Record count",
+        "Type": "CUSTOM_JAR",
+        "ActionOnFailure": "CONTINUE",
+        "Jar": "%CODE%/%JAR%",
+        "MainClass": "nz.org.hikari.cat.ncdc_count.NcdcRecordCount",
+        "Args": [
+            "%INPUT%",
+            "%OUTPUT%"
+        ]
+    }
+]
