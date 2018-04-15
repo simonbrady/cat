@@ -4,6 +4,8 @@
 REGION ?= ap-southeast-2
 KEYPAIR ?= $(HOME)/keys/home-$(REGION).pem
 STACK ?= cat-emr-cluster
+BUCKET ?= s3://ncdc.hikari.org.nz
+CODE ?= $(BUCKET)/code
 
 # Commands to use
 AWS=aws

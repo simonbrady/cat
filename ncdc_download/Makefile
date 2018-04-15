@@ -5,8 +5,6 @@ FROM ?= 1901
 TO ?= 1910
 
 # Job-specific details
-BUCKET ?= s3://ncdc.hikari.org.nz
-CODE ?= $(BUCKET)/code
 INPUT ?= $(BUCKET)/input/years
 OUTPUT ?= $(BUCKET)/data/$(FROM)-$(TO)
 MAPS ?= 12
