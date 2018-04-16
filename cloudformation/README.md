@@ -8,11 +8,11 @@ on it. You can either load the [template](cluster.yml) from the CloudFormation c
 deploy straight from the command line with `make`. You can override various
 [Makefile](Makefile) variables to configure the cluster, e.g.
 ```
-CORE_TYPE=i3.xlarge CORE_COUNT=4 CORE_EBS=0 make
+CORE_TYPE=i3.xlarge CORE_COUNT=4 CORE_EBS_SIZE=0 make
 ```
 would deploy a cluster with four i3.xlarge nodes in its core instance group and not
-attach any EBS volumes since these instances provide locally-attached instance store
-for HDFS.
+attach any EBS volumes (since these instances provide locally-attached instance store
+for HDFS).
 
 Some settings are not exposed as CloudFormation parameters, but are hard-coded in the
 `RegionSpecific` mapping table in the template: you'll need to update these for
