@@ -23,5 +23,5 @@ This can be overridden, e.g. if you've already copied the input files to HDFS:
 INPUT="1901-1910 1911-1930" make count
 ```
 
-The job runs as the default `hadoop` user so it would like for these input paths
+The job runs as the default `hadoop` user so it would look for these input paths
 under `/user/hadoop` in HDFS.
