@@ -22,7 +22,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class NcdcRecordCountMapperTest {
 
-	NcdcRecordCountMapper mapper;
+	private NcdcRecordCountMapper mapper;
 
 	@Mock
 	private NcdcRecordCountMapper.Context context;
