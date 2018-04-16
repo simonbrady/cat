@@ -13,7 +13,7 @@ public class NcdcDownloadOutputFormatTest {
 		NcdcDownloadOutputFormat outputFormat = new NcdcDownloadOutputFormat();
 		String path = outputFormat.generateFileNameForKeyValue(new Text("1901"),
 			new Text("value"), "filename.bz2");
-		assertEquals(path, "1901/filename.bz2");
+		assertEquals("1901/filename.bz2", path);
 	}
 
 	@Test
