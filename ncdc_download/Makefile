@@ -12,7 +12,7 @@ MAP_MEMORY_MB ?= 3072
 COPY_SOURCE ?= $(OUTPUT)
 COPY_DEST ?= /user/hadoop/$(FROM)-$(TO)
 
-.PHONY: build clean upload download
+.PHONY: build clean test upload download
 
 all: build
 
@@ -23,6 +23,10 @@ build:
 clean:
 	@echo Cleaning build directory
 	$(GRADLE) clean
+
+test:
+	@echo Running unit tests
+	$(GRADLE) test
 
 upload: build
 	@echo Uploading code

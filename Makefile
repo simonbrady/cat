@@ -1,14 +1,7 @@
-include common.mk
-
 SUBDIRS=ncdc_count ncdc_download
 
 # Pass these targets straight on to subdirectories
-all clean test:
-	$(process-subdirs)
-
-doc: $(README)
-	$(process-subdirs)
-
-distclean:
-	-$(RM) $(README)
-	$(process-subdirs)
+all build clean test:
+	for f in $(SUBDIRS); do \
+		$(MAKE) -C $$f $@; \
+	done

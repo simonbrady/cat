@@ -4,7 +4,7 @@ include ../common.mk
 INPUT ?= $(BUCKET)/data/1901-1910
 OUTPUT ?= $(BUCKET)/out
 
-.PHONY: build clean upload
+.PHONY: build clean test upload count
 
 JAR=ncdc_count.jar
 
@@ -17,6 +17,10 @@ build:
 clean:
 	@echo Cleaning build directory
 	$(GRADLE) clean
+
+test:
+	@echo Running unit tests
+	$(GRADLE) test
 
 upload: build
 	@echo Uploading code
