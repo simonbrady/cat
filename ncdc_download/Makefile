@@ -12,7 +12,7 @@ MAP_MEMORY_MB ?= 3072
 COPY_SOURCE ?= $(OUTPUT)
 COPY_DEST ?= /user/hadoop/$(FROM)-$(TO)
 
-.PHONY: build clean test upload download
+.PHONY: build clean test upload download copy
 
 all: build
 
