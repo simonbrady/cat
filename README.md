@@ -17,9 +17,11 @@ and a bit of Fortran (there's life in the old dog yet!)
 using [Jersey](https://jersey.java.net/) and
 [Jackson](https://github.com/FasterXML/jackson) to publish and consume RESTful
 web services
-* Server-side presentation layer in [Rails](http://rubyonrails.org/)
+* Server-side presentation layer in [Django](https://www.djangoproject.com/)
 * Client-side presentation using the
 [Google Maps JavaScript API](https://developers.google.com/maps/documentation/javascript/)
+* Automation with [Gradle](https://gradle.org/) and
+[AWS CloudFormation](https://aws.amazon.com/cloudformation/)
 
 The unimaginative project name was inspired by
 [these little guys](http://www.hikari.org.nz/stuff/random/kitten_helpers.jpg)
@@ -29,9 +31,9 @@ who enjoy climbing onto my lap when I'm trying to code.
 
 The NCDC data comprises historic observations from (mostly fixed) weather
 stations around the world. The data runs from 1901 to the present day, but
-since I'm interested in annual trends I only take it up to the end of 2014.
-This is still large enough to be interesting, giving us a little over 2.7
-billion observations from around 30,000 stations.
+since I'm interested in annual trends I only take it up to the end of 2017.
+This is still large enough to be interesting, giving us a little over 3.1
+billion observations from around 32,000 stations.
 
 By contrast, the CCAFS data comprises global predictions for future climate.
 The overall dataset is
@@ -40,7 +42,7 @@ so to keep things manageable I've decided to focus on the 19
 [bioclimatic variables](http://www.ccafs-climate.org/downloads/docs/bioclimatic-variables.pdf)
 derived from data used by the
 [IPCC Fifth Assessment Report](https://www.ipcc.ch/report/ar5/) (IPCC AR5). The
-AR5 data is generated from the [CMIP5](http://cmip-pcmdi.llnl.gov/cmip5/)
+AR5 data is generated from the [CMIP5](https://esgf-node.llnl.gov/projects/cmip5/)
 ensemble of general circulation models (GCMs) under various scenarios, then
 [downscaled](http://www.ccafs-climate.org/statistical_downscaling_delta_cmip5/)
 to finer spatial resolution.
@@ -64,10 +66,10 @@ hopefully present themselves.
 
 ## Processing Steps
 
-1. [NCDC Download](ncdc_download)
-2. [NCDC Record Count](ncdc_count)
+1. [Cluster setup with CloudFormation](cloudformation)
+2. [NCDC Download](ncdc_download)
+3. [NCDC Record Count](ncdc_count)
 
 ## To Do
 
-Lots and lots of stuff to finish off, tidy up, and publish on GitHub. Stay
-tuned!
+[All the things](http://knowyourmeme.com/memes/all-the-things)
