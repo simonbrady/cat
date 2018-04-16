@@ -51,14 +51,14 @@ it's worth running the download from there).
 To scale jobs up without breaking the bank it's worth having a range of input datasets.
 As a rough guide these are the sizes I use:
 
-|Years    |Stations Included|Records      |Compressed Size:|
-|---------|----------------:|------------:|---------------:|
-|1901-1910|               13|       65,570|          390 KB|
-|1901-1930|              144|      326,261|          2.5 MB|
-|1901-1950|            4,880|   55,528,105|          604 MB|
-|1901-1970|            9,893|  255,143,894|          3.2 GB|
-|1901-1990|           19,234|  853,164,630|         12.1 GB|
-|1901-2017|           31,741|3,126,682,587|         56.8 GB|
+|Years    |Stations Included|Records      |Compressed Size|
+|---------|----------------:|------------:|--------------:|
+|1901-1910|               13|       65,570|         390 KB|
+|1901-1930|              144|      326,261|         2.5 MB|
+|1901-1950|            4,880|   55,528,105|         604 MB|
+|1901-1970|            9,893|  255,143,894|         3.2 GB|
+|1901-1990|           19,234|  853,164,630|        12.1 GB|
+|1901-2017|           31,741|3,126,682,587|        56.8 GB|
 
 Once you have the data in S3, you can use
 ```
