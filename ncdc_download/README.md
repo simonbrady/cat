@@ -48,7 +48,7 @@ This took about 25 hours on a cluster of two m4.large nodes in us-east-1 (even i
 that isn't your local region, FTP is so slow in the face of network latency that
 it's worth running the download from there).
 
-To scale jobs up with breaking the bank it's worth having a range of input datasets.
+To scale jobs up without breaking the bank it's worth having a range of input datasets.
 As a rough guide these are the sizes I use:
 
 |Years    |Stations Included|Records      |Compressed Size:|
