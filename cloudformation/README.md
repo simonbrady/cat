@@ -2,7 +2,7 @@
 
 This directory contains a
 [CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html)
-template to deploy an EMR cluster and configure 
+template to deploy an EMR cluster and configure
 [debugging](https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-plan-debugging.html)
 on it. You can either load the [template](cluster.yml) from the CloudFormation console, or
 deploy straight from the command line with `make`. You can override various

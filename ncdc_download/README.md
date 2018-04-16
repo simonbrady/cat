@@ -25,7 +25,7 @@ map output to different directories I use a small Java class that implements a c
 output format.
 
 Processing is driven by `make` commands. After deploying an EMR cluster (e.g. using
-the included [CloudFormation template](../cloudformation), build and upload the
+the included [CloudFormation template](../cloudformation)), build and upload the
 required code to S3:
 ```
 make upload
