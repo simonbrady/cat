@@ -1,0 +1,18 @@
+[
+    {
+        "Name": "NCDC extract",
+        "Type": "CUSTOM_JAR",
+        "ActionOnFailure": "CONTINUE",
+        "Jar": "%CODE%/%JAR%",
+        "MainClass": "nz.org.hikari.cat.ncdc_extract.NcdcExtract",
+        "Args": [
+            "-D",
+            "mapreduce.output.fileoutputformat.compress=true",
+            "-D",
+            "mapreduce.output.fileoutputformat.compress.codec=org.apache.hadoop.io.compress.BZip2Codec",
+            "%STATIONS%",
+            "%INPUT%",
+            "%OUTPUT%"
+        ]
+    }
+]

@@ -69,6 +69,7 @@ hopefully present themselves.
 1. [Cluster setup with CloudFormation](cloudformation)
 2. [NCDC Download](ncdc_download)
 3. [NCDC Record Count](ncdc_count)
+4. [NCDC Extract](ncdc_extract)
 
 ## To Do
 

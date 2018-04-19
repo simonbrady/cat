@@ -1,4 +1,4 @@
-SUBDIRS=ncdc_count ncdc_download
+SUBDIRS=ncdc_count ncdc_download ncdc_extract
 
 # Pass these targets straight on to subdirectories
 all build clean test:
