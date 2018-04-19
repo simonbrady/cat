@@ -1,7 +1,7 @@
 package nz.org.hikari.cat.ncdc_count;
 
 // Unit tests for NcdcRecordCountMapper, based on the example in Tom White,
-// "Hadoop: The Definitive Guide" (3rd ed: O'Reilly, 2012), p154, but updated
+// "Hadoop: The Definitive Guide" (4th ed: O'Reilly, 2015), p153, but updated
 // for Mockito since MRUnit has been retired. Mockito approach taken from
 // https://stackoverflow.com/questions/47701421
 
@@ -36,15 +36,15 @@ public class NcdcRecordCountMapperTest {
 	public void testMap() throws IOException, InterruptedException {
 		// Dummy offset
 		LongWritable dummy = new LongWritable(0L);
-		// Start of first record in 1901/029070-99999-1901.gz
+		// Control data section of first record in 1901/029070-99999-1901.gz
 		Text key1 = new Text("029070-99999");
-		Text value1 = new Text("0029029070999991901010106004+64333+023450FM-12");
-		// Start of first record in 1901/029500-99999-1901.gz
+		Text value1 = new Text("0029029070999991901010106004+64333+023450FM-12+000599999V020");
+		// Control data section of first record in 1901/029500-99999-1901.gz
 		Text key2 = new Text("029500-99999");
-		Text value2 = new Text("0029029500999991901010106004+61483+021350FM-12");
-		// Start of second record in 1901/029070-99999-1901.gz
+		Text value2 = new Text("0029029500999991901010106004+61483+021350FM-12+000699999V020");
+		// Control data section of second record in 1901/029070-99999-1901.gz
 		Text key3 = new Text("029070-99999");
-		Text value3 = new Text("0029029070999991901010113004+64333+023450FM-12");
+		Text value3 = new Text("0029029070999991901010113004+64333+023450FM-12+000599999V020");
 		// Expected count
 		LongWritable one = new LongWritable(1L);
 		// Wrapper to verify that results are written in the correct order
@@ -62,4 +62,5 @@ public class NcdcRecordCountMapperTest {
 	public void tearDown() throws Exception {
 		verifyNoMoreInteractions(context);
 	}
+
 }

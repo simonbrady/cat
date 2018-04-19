@@ -1,5 +1,8 @@
 package nz.org.hikari.cat.ncdc_download;
 
+// Print Hadoop configuration, taken from Tom White, "Hadoop: The Definitive Guide"
+// (4th ed, O'Reilly, 2015), p. 149
+
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -8,9 +11,6 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
-
-// Print Hadoop configuration, taken from Tom White, "Hadoop: The Definitive Guide"
-// (4th ed, O'Reilly, 2015), p. 149
 
 public class ConfigurationPrinter extends Configured implements Tool {
 

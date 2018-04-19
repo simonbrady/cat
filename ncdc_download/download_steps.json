@@ -1,6 +1,6 @@
 [
     {
-        "Name": "Generate file list",
+        "Name": "Generate NCDC file list",
         "Type": "STREAMING",
         "ActionOnFailure": "CANCEL_AND_WAIT",
         "Args": [
@@ -21,7 +21,7 @@
         ]
     },
     {
-        "Name": "Download files",
+        "Name": "Download NCDC files",
         "Type": "STREAMING",
         "ActionOnFailure": "CONTINUE",
         "Args": [

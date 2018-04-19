@@ -1,5 +1,7 @@
 package nz.org.hikari.cat.ncdc_download;
 
+// Unit tests for NcdcDownloadOutputFormat
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
