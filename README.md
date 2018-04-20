@@ -20,7 +20,7 @@ web services
 * Server-side presentation layer in [Django](https://www.djangoproject.com/)
 * Client-side presentation using the
 [Google Maps JavaScript API](https://developers.google.com/maps/documentation/javascript/)
-* Automation with [Gradle](https://gradle.org/) and
+* Automation with [Gradle](https://gradle.org/), [Mockito](https://site.mockito.org/) and
 [AWS CloudFormation](https://aws.amazon.com/cloudformation/)
 
 The unimaginative project name was inspired by
