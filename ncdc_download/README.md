@@ -3,7 +3,7 @@
 Due to the size of the datasets it's easiest to host the project in the
 [Amazon Web Services](http://aws.amazon.com/) cloud. The CCAFS data is already
 available as an
-[AWS public dataset](http://aws.amazon.com/datasets/0241269495883982), but the
+[AWS public dataset](https://registry.opendata.aws/cgiardata/), but the
 NCDC data is spread over more than half a million small files on the NOAA FTP
 site (`ftp://ftp.ncdc.noaa.gov/pub/data/noaa/`, which Markdown
 [won't link to](https://github.com/jch/html-pipeline/issues/187)).
