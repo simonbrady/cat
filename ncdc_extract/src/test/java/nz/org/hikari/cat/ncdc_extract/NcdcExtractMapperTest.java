@@ -34,6 +34,9 @@ public class NcdcExtractMapperTest {
 	private MultipleOutputs<NullWritable, Text> multipleOutputs;
 
 	@Mock
+	private Counter extractedCounter;
+
+	@Mock
 	private Counter ignoredCounter;
 
 	@Mock
@@ -59,6 +62,8 @@ public class NcdcExtractMapperTest {
 		// Control data section of second record in 1901/029070-99999-1901.gz
 		Text value3 = new Text("0029029070999991901010113004+64333+023450FM-12+000599999V020");
 
+		when(context.getCounter(Constants.COUNTER_GROUP, Constants.EXTRACTED))
+			.thenReturn(extractedCounter);
 		when(context.getCounter(Constants.COUNTER_GROUP, Constants.IGNORED))
 			.thenReturn(ignoredCounter);
 		when(context.getCounter(Constants.COUNTER_GROUP, station))
@@ -79,7 +84,8 @@ public class NcdcExtractMapperTest {
 		mapper.map(dummy, value3, context);
 		mapper.cleanup(context);
 
-		verify(context, times(3)).getCounter(eq(Constants.COUNTER_GROUP), anyString());
+		verify(context, times(4)).getCounter(eq(Constants.COUNTER_GROUP), anyString());
+		verify(extractedCounter, times(1)).increment(1);
 		verify(ignoredCounter, times(2)).increment(1);
 		verify(stationCounter, times(1)).increment(1);
 		verify(multipleOutputs).write(NullWritable.get(), value2, station + Constants.SUFFIX);
@@ -89,6 +95,7 @@ public class NcdcExtractMapperTest {
 	@After
 	public void tearDown() throws Exception {
 		verifyNoMoreInteractions(context);
+		verifyNoMoreInteractions(extractedCounter);
 		verifyNoMoreInteractions(ignoredCounter);
 		verifyNoMoreInteractions(stationCounter);
 		verifyNoMoreInteractions(multipleOutputs);

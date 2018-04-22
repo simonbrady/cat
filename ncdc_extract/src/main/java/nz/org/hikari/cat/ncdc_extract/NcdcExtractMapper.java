@@ -50,6 +50,7 @@ public class NcdcExtractMapper
 		String id = line.substring(4, 10) + "-" + line.substring(10, 15);
 		if (stations.contains(id)) {
 			multipleOutputs.write(NullWritable.get(), value, id + Constants.SUFFIX);
+			context.getCounter(Constants.COUNTER_GROUP, Constants.EXTRACTED).increment(1);
 			context.getCounter(Constants.COUNTER_GROUP, id).increment(1);
 		} else {
 			context.getCounter(Constants.COUNTER_GROUP, Constants.IGNORED).increment(1);
