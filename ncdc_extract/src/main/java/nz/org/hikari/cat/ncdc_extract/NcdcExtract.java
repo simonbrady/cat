@@ -18,7 +18,6 @@ package nz.org.hikari.cat.ncdc_extract;
 
 import java.net.URI;
 
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.NullWritable;
@@ -34,8 +33,7 @@ import org.apache.hadoop.util.ToolRunner;
 public class NcdcExtract extends Configured implements Tool {
 
 	public int run(String[] args) throws Exception {
-		Configuration conf = getConf();
-		Job job = Job.getInstance(conf, "NCDC Extract");
+		Job job = Job.getInstance(getConf(), "NCDC Extract");
 		job.setJarByClass(NcdcExtract.class);
 		job.setMapperClass(NcdcExtractMapper.class);
 		job.setMapOutputKeyClass(Text.class);
