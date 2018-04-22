@@ -3,7 +3,7 @@
 Extract NCDC records for a given list of station IDs. For example, given the input list
 ```
 # Comments and blank lines are ignored
-029070-99999
+029070-99999   So is everything after the first occurrence of whitespace
 029500-99999
 ```
 the job will create an output directory for each station that appears at least once in

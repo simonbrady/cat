@@ -49,7 +49,7 @@ public class NcdcExtractMapperTest {
 		// Station to extract
 		String station = "029500-99999";
 		// Simulated file of station IDs, including comments and blank lines
-		String stationInput = String.format("# fnord\n\n  \n%s\n\t#\n", station);
+		String stationInput = String.format("# foo\n\n  \n%s bar\n\t#\n", station);
 		// Dummy offset
 		LongWritable dummy = new LongWritable(0L);
 		// Control data section of first record in 1901/029070-99999-1901.gz

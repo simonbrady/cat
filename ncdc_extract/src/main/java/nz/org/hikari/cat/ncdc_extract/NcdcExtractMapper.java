@@ -33,7 +33,7 @@ public class NcdcExtractMapper
 		while (line != null) {
 			line = line.trim();
 			if (line.length() > 0 && !line.startsWith("#"))
-				stations.add(line);
+				stations.add(line.split("\\s")[0]);
 			line = reader.readLine();
 		}
 	}
