@@ -13,9 +13,8 @@ package nz.org.hikari.cat.ncdc_extract;
 //        format such as gzip or bzip2, and a text file of desired station IDs
 //        to extract, one per line
 //
-// Output: One output directory per station, with the raw input data for that
-//         station in one or more files (depending on how many map tasks had
-//         records for that station in their input)
+// Output: One output file per station containing all the raw input data for
+//         that station
 
 import java.net.URI;
 
