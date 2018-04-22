@@ -9,22 +9,17 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
-import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 
 public class NcdcExtractMapper
-		extends Mapper<LongWritable, Text, NullWritable, Text> {
+		extends Mapper<LongWritable, Text, Text, Text> {
 
 	private Set<String> stations = new HashSet<>();
 
-	private MultipleOutputs<NullWritable, Text> multipleOutputs;
-	
 	@Override
 	protected void setup(Context context) throws IOException {
 		readStations(new BufferedReader(new FileReader(Constants.LOCAL_STATION_FILE)));
-		multipleOutputs = new MultipleOutputs<>(context);
 	}
 
 	// Get set of station IDs to extract, separated out for ease of testing
@@ -49,17 +44,11 @@ public class NcdcExtractMapper
 		String line = value.toString();
 		String id = line.substring(4, 10) + "-" + line.substring(10, 15);
 		if (stations.contains(id)) {
-			multipleOutputs.write(NullWritable.get(), value, id + Constants.SUFFIX);
+			context.write(new Text(id), value);
 			context.getCounter(Constants.COUNTER_GROUP, Constants.EXTRACTED).increment(1);
-			context.getCounter(Constants.COUNTER_GROUP, id).increment(1);
 		} else {
 			context.getCounter(Constants.COUNTER_GROUP, Constants.IGNORED).increment(1);
 		}
-	}
-
-	@Override
-	protected void cleanup(Context context) throws IOException, InterruptedException {
-		multipleOutputs.close();
 	}
 
 }

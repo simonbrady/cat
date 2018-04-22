@@ -6,9 +6,8 @@ Extract NCDC records for a given list of station IDs. For example, given the inp
 029070-99999   So is everything after the first occurrence of whitespace
 029500-99999
 ```
-the job will create an output directory for each station that appears at least once in
-the input, with the corresponding records written to one or more files depending on how
-many map tasks had records for that station in their input. 
+the job will create an output file for each station that appears at least once in
+the input. 
 
 To build the code and upload it to S3 where EMR can find it, do:
 ```

@@ -39,7 +39,9 @@ public class NcdcExtract extends Configured implements Tool {
 		Job job = Job.getInstance(conf, "NCDC Extract");
 		job.setJarByClass(NcdcExtract.class);
 		job.setMapperClass(NcdcExtractMapper.class);
-		job.setNumReduceTasks(0);
+		job.setMapOutputKeyClass(Text.class);
+		job.setMapOutputValueClass(Text.class);
+		job.setReducerClass(NcdcExtractReducer.class);
 		job.setOutputKeyClass(NullWritable.class);
 		job.setOutputValueClass(Text.class);
 

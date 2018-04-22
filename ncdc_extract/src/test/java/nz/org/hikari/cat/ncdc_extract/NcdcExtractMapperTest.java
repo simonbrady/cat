@@ -7,14 +7,11 @@ import static org.mockito.Mockito.*;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Counter;
-import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,16 +28,10 @@ public class NcdcExtractMapperTest {
 	private NcdcExtractMapper.Context context;
 
 	@Mock
-	private MultipleOutputs<NullWritable, Text> multipleOutputs;
-
-	@Mock
 	private Counter extractedCounter;
 
 	@Mock
 	private Counter ignoredCounter;
-
-	@Mock
-	private Counter stationCounter;
 
 	@Before
 	public void setUp() throws Exception {
@@ -50,7 +41,8 @@ public class NcdcExtractMapperTest {
 	@Test
 	public void testMap() throws Exception {
 		// Station to extract
-		String station = "029500-99999";
+		String station = "029070-99999";
+		Text key = new Text(station);
 		// Simulated file of station IDs, including comments and blank lines
 		String stationInput = String.format("# foo\n\n  \n%s bar\n\t#\n", station);
 		// Dummy offset
@@ -66,8 +58,6 @@ public class NcdcExtractMapperTest {
 			.thenReturn(extractedCounter);
 		when(context.getCounter(Constants.COUNTER_GROUP, Constants.IGNORED))
 			.thenReturn(ignoredCounter);
-		when(context.getCounter(Constants.COUNTER_GROUP, station))
-			.thenReturn(stationCounter);
 
 		// Simulate call to mapper.setup()
 		Method mapperReadStations = NcdcExtractMapper.class
@@ -75,21 +65,16 @@ public class NcdcExtractMapperTest {
 		mapperReadStations.setAccessible(true);
 		mapperReadStations.invoke(mapper, new BufferedReader(new StringReader(stationInput)));
 		assertEquals(1, mapper.getNumberOfStations());
-		Field mapperMultipleOutputs = NcdcExtractMapper.class.getDeclaredField("multipleOutputs");
-		mapperMultipleOutputs.setAccessible(true);
-		mapperMultipleOutputs.set(mapper, multipleOutputs);
 
 		mapper.map(dummy, value1, context);
 		mapper.map(dummy, value2, context);
 		mapper.map(dummy, value3, context);
-		mapper.cleanup(context);
 
-		verify(context, times(4)).getCounter(eq(Constants.COUNTER_GROUP), anyString());
-		verify(extractedCounter, times(1)).increment(1);
-		verify(ignoredCounter, times(2)).increment(1);
-		verify(stationCounter, times(1)).increment(1);
-		verify(multipleOutputs).write(NullWritable.get(), value2, station + Constants.SUFFIX);
-		verify(multipleOutputs).close();
+		verify(context, times(3)).getCounter(eq(Constants.COUNTER_GROUP), anyString());
+		verify(context).write(key, value1);
+		verify(context).write(key, value3);
+		verify(extractedCounter, times(2)).increment(1);
+		verify(ignoredCounter, times(1)).increment(1);
 	}
 
 	@After
@@ -97,8 +82,6 @@ public class NcdcExtractMapperTest {
 		verifyNoMoreInteractions(context);
 		verifyNoMoreInteractions(extractedCounter);
 		verifyNoMoreInteractions(ignoredCounter);
-		verifyNoMoreInteractions(stationCounter);
-		verifyNoMoreInteractions(multipleOutputs);
 	}
 
 }
