@@ -25,6 +25,8 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.LazyOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.mapreduce.lib.reduce.LongSumReducer;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
@@ -46,6 +48,7 @@ public class NcdcRecordCount extends Configured implements Tool {
 		for (int i = 0; i < args.length - 1; i++)
 			FileInputFormat.addInputPath(job, new Path(args[i]));
 		FileOutputFormat.setOutputPath(job, new Path(args[args.length - 1]));
+		LazyOutputFormat.setOutputFormatClass(job, TextOutputFormat.class);
 
 		return job.waitForCompletion(true) ? 0 : 1;
 	}
