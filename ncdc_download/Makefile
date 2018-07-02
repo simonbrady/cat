@@ -32,7 +32,7 @@ upload: build
 	@echo Uploading code
 	$(EMR) put --cluster-id $(CLUSTER) --key-pair-file $(KEYPAIR) --src build/libs/ncdc_download.jar
 	for f in download_mapper1.py download_mapper2.py; do \
-		$(S3) cp $$f $(CODE)/$$(basename $$f); \
+		$(S3) cp src/main/python/$$f $(CODE)/$$(basename $$f); \
 	done
 
 download:
