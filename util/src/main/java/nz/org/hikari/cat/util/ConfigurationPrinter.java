@@ -1,4 +1,4 @@
-package nz.org.hikari.cat.ncdc_download;
+package nz.org.hikari.cat.util;
 
 // Print Hadoop configuration, taken from Tom White, "Hadoop: The Definitive Guide"
 // (4th ed, O'Reilly, 2015), p. 149
