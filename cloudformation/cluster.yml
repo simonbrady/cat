@@ -33,11 +33,9 @@ Mappings:
   RegionSpecific:
     ap-southeast-2:
       KeyPair: home-ap-southeast-2
-      MasterSecurityGroup: sg-04c6e263
       SubnetId: subnet-fab3cb8d
     us-east-1:
       KeyPair: home-us-east-1
-      MasterSecurityGroup: sg-1ff63b65
       SubnetId: subnet-1a1ace30
 
 Resources:
@@ -45,11 +43,6 @@ Resources:
     Type: AWS::EMR::Cluster
     Properties:
       Instances:
-        AdditionalMasterSecurityGroups:
-          - Fn::FindInMap:
-              - RegionSpecific
-              - Ref: AWS::Region
-              - MasterSecurityGroup
         CoreInstanceGroup:
           EbsConfiguration:
             Fn::If:
@@ -80,8 +73,7 @@ Resources:
           InstanceType:
             Ref: MasterInstanceType
       JobFlowRole: EMR_EC2_DefaultRole
-      LogUri:
-        Fn::Sub: s3://aws-logs-${AWS::AccountId}-${AWS::Region}/elasticmapreduce/
+      LogUri: s3://logs.hikari.org.nz/emr/
       Name: Climate Analysis Tool
       ReleaseLabel:
         Ref: ReleaseLabel

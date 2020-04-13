@@ -14,6 +14,8 @@ COPY_DEST ?= /user/hadoop/$(FROM)-$(TO)
 
 .PHONY: build clean test upload download copy
 
+JAR=ncdc_download.jar
+
 all: build
 
 build:
@@ -30,7 +32,8 @@ test:
 
 upload: build
 	@echo Uploading code
-	$(EMR) put --cluster-id $(CLUSTER) --key-pair-file $(KEYPAIR) --src build/libs/ncdc_download.jar
+	$(EMR) put --cluster-id $(CLUSTER) --key-pair-file $(KEYPAIR) --src build/libs/$(JAR)
+	$(S3) cp build/libs/$(JAR) $(CODE)/$(JAR)
 	for f in download_mapper1.py download_mapper2.py; do \
 		$(S3) cp src/main/python/$$f $(CODE)/$$(basename $$f); \
 	done

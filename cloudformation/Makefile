@@ -9,7 +9,7 @@ CORE_TYPE ?= m4.large
 # Master node instance type
 MASTER_TYPE ?= m4.large
 # EMR release label to install
-RELEASE_LABEL ?= emr-5.13.0
+RELEASE_LABEL ?= emr-5.29.0
 
 .PHONY: cluster terminate proxy
 
