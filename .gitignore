@@ -2,3 +2,5 @@
 !.gitignore
 **/bin
 **/build
+**/.terraform/
+terraform.tfstate*

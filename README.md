@@ -21,7 +21,7 @@ web services
 * Client-side presentation using the
 [Google Maps JavaScript API](https://developers.google.com/maps/documentation/javascript/)
 * Automation with [Gradle](https://gradle.org/), [Mockito](https://site.mockito.org/) and
-[AWS CloudFormation](https://aws.amazon.com/cloudformation/)
+[Terraform](https://terraform.io)
 
 The unimaginative project name was inspired by
 [these little guys](http://www.hikari.org.nz/stuff/random/kitten_helpers.jpg)
@@ -66,7 +66,7 @@ hopefully present themselves.
 
 ## Processing Steps
 
-1. [Cluster setup with CloudFormation](cloudformation)
+1. [Cluster setup with Terraform](terraform)
 2. [NCDC Download](ncdc_download)
 3. [NCDC Record Count](ncdc_count)
 4. [NCDC Extract](ncdc_extract)

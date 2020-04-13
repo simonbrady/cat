@@ -9,12 +9,11 @@ CODE ?= $(BUCKET)/code
 
 # Commands to use
 AWS=aws
-CF=$(AWS) cloudformation --region $(REGION)
 EMR=$(AWS) emr --region $(REGION)
 S3=$(AWS) s3
 GRADLE=gradle
 SED=sed
+TF=terraform
 
 # Helper for AWS CLI commands that take a cluster ID
-CLUSTER=$$($(CF) describe-stacks --stack-name $(STACK) \
-	--query "Stacks[0].Outputs[?OutputKey=='ClusterId'].OutputValue" --output text)
+CLUSTER=$$(cd ../terraform; $(TF) output cluster_id)
