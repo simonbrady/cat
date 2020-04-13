@@ -14,6 +14,6 @@ To terminate the cluster when you've finshed, simply do:
 make terminate
 ```
 
-If you choose to deploy your cluster without using the template, you should set the CLUSTER
+If you choose to deploy your cluster without using the template, you should set the `CLUSTER`
 environment variable to its ID since other components' Makefiles expect this to resolve to
 the cluster ID.
