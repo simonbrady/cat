@@ -8,6 +8,7 @@ TO ?= 1910
 INPUT ?= $(CONTROL)/ncdc_download/years
 OUTPUT ?= $(DATA)
 MAPS ?= 12
+# See https://docs.aws.amazon.com/emr/latest/ReleaseGuide/emr-hadoop-task-config.html for sizing
 MAP_MEMORY_MB ?= 3072
 COPY_SOURCE ?= $(OUTPUT)
 COPY_DEST ?= /user/hadoop
