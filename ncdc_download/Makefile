@@ -5,16 +5,15 @@ FROM ?= 1901
 TO ?= 1910
 
 # Job-specific details
-INPUT ?= $(BUCKET)/input/years
-OUTPUT ?= $(BUCKET)/data/$(FROM)-$(TO)
+INPUT ?= $(CONTROL)/ncdc_download/years
+OUTPUT ?= $(DATA)
 MAPS ?= 12
 MAP_MEMORY_MB ?= 3072
 COPY_SOURCE ?= $(OUTPUT)
-COPY_DEST ?= /user/hadoop/$(FROM)-$(TO)
+COPY_DEST ?= /user/hadoop
+JAR=ncdc_download.jar
 
 .PHONY: build clean test upload download copy
-
-JAR=ncdc_download.jar
 
 all: build
 
@@ -32,7 +31,6 @@ test:
 
 upload: build
 	@echo Uploading code
-	$(EMR) put --cluster-id $(CLUSTER) --key-pair-file $(KEYPAIR) --src build/libs/$(JAR)
 	$(S3) cp build/libs/$(JAR) $(CODE)/$(JAR)
 	for f in download_mapper1.py download_mapper2.py; do \
 		$(S3) cp src/main/python/$$f $(CODE)/$$(basename $$f); \
@@ -40,6 +38,7 @@ upload: build
 
 download:
 	@echo Starting download of NCDC data for $(FROM)-$(TO) to $(OUTPUT)
+	$(EMR) put --cluster-id $(CLUSTER) --key-pair-file $(KEYPAIR) --src build/libs/$(JAR)
 	t=$$(mktemp); seq $(FROM) $(TO) > $$t; $(S3) cp $$t $(INPUT); rm $$t
 	$(EMR) ssh --cluster-id $(CLUSTER) --key-pair-file $(KEYPAIR) \
 		--command "hadoop fs -rm -R -f files"

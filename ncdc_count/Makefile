@@ -1,7 +1,7 @@
 include ../common.mk
 
 # Input can be a space-separated list of paths
-INPUT ?= $(BUCKET)/data/1901-1910
+INPUT ?= $(DATA)
 OUTPUT ?= $(BUCKET)/out
 
 .PHONY: build clean test upload count

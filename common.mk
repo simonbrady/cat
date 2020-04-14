@@ -3,9 +3,10 @@
 # Settings shared across sub-projects
 REGION ?= ap-southeast-2
 KEYPAIR ?= $(HOME)/keys/home-$(REGION).pem
-STACK ?= cat-emr-cluster
 BUCKET ?= s3://ncdc.hikari.org.nz
 CODE ?= $(BUCKET)/code
+CONTROL ?= $(BUCKET)/control
+DATA ?= $(BUCKET)/data
 
 # Commands to use
 AWS=aws
