@@ -40,7 +40,7 @@ variable "instance_profile_name" {
 
 variable "key_name" {
   type        = string
-  description = "Name of EC2 key pair for cluster nodes"
+  description = "EC2 key pair for cluster nodes, derived from KEYPAIR in common.mk"
 }
 
 variable "log_uri" {
@@ -56,6 +56,11 @@ variable "master_instance_count" {
 variable "master_instance_type" {
   type        = string
   description = "Instance type for master instance group"
+}
+
+variable "region" {
+  type        = string
+  description = "AWS region to deploy into, set as REGION in common.mk"
 }
 
 variable "release_label" {

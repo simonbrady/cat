@@ -7,7 +7,7 @@ all: cluster
 cluster:
 	@echo Creating EMR cluster
 	$(TF) init
-	$(TF) apply
+	$(TF) apply -var region=$(REGION) -var key_name=$(basename $(notdir $(KEYPAIR)))
 
 terminate:
 	@echo Terminating EMR cluster

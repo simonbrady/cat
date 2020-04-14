@@ -1,7 +1,7 @@
 # Common definitions included by all Makefiles
 
 # Settings shared across sub-projects
-REGION ?= ap-southeast-2
+REGION ?= us-east-1
 KEYPAIR ?= $(HOME)/keys/home-$(REGION).pem
 BUCKET ?= s3://ncdc.hikari.org.nz
 CODE ?= $(BUCKET)/code
