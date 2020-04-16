@@ -17,4 +17,4 @@ SED=sed
 TF=terraform
 
 # Helper for AWS CLI commands that take a cluster ID
-CLUSTER=$(shell (cd ../terraform; $(TF) output cluster_id))
+CLUSTER=$$(cd ../terraform; $(TF) output cluster_id)
