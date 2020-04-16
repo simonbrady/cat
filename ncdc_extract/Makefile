@@ -1,8 +1,9 @@
 include ../common.mk
 
-# Input can be a space-separated list of paths
-INPUT ?= $(DATA)
-OUTPUT ?= $(BUCKET)/out
+FROM ?= 1901
+TO ?= 1910
+INPUT ?= $(foreach year, $(shell seq $(FROM) $(TO)), $(DATA)/$(year))
+OUTPUT ?= $(BUCKET)/output/ncdc_extract/$(FROM)-$(TO)
 STATIONS ?= $(CONTROL)/ncdc_extract/stations
 
 .PHONY: build clean test upload extract
@@ -28,7 +29,7 @@ upload: build
 	$(S3) cp build/libs/$(JAR) $(CODE)/$(JAR)
 
 extract:
-	@echo Extracting selected NCDC records from $(INPUT) to $(OUTPUT)
+	@echo Extracting selected NCDC records for $(FROM)-$(TO) to $(OUTPUT)
 	$(EMR) add-steps --cluster-id $(CLUSTER) --steps "$$($(SED) \
 		-e "s|%CODE%|$(CODE)|" \
 		-e "s|%INPUT%|$$(echo $(INPUT) | $(SED) -e 's/ /","/g')|" \
