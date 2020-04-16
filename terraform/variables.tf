@@ -1,3 +1,8 @@
+variable "admin_cidr_blocks" {
+  type        = list(string)
+  description = "List of CIDR blocks to allow SSH access from"
+}
+
 variable "applications" {
   type        = list(string)
   description = "List of EMR applications to deploy to cluster"

@@ -1,3 +1,16 @@
+resource "aws_security_group" "master" {
+  name   = "EMR master SSH"
+  vpc_id = data.aws_subnet.master.vpc_id
+
+  ingress {
+    description = "SSH to master"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = var.admin_cidr_blocks
+  }
+}
+
 resource "aws_emr_cluster" "cat" {
   name                   = var.cluster_name
   release_label          = var.release_label
@@ -26,9 +39,10 @@ resource "aws_emr_cluster" "cat" {
   }
 
   ec2_attributes {
-    instance_profile = var.instance_profile_name
-    key_name         = var.key_name
-    subnet_id        = var.subnet_id
+    instance_profile                  = var.instance_profile_name
+    key_name                          = var.key_name
+    subnet_id                         = var.subnet_id
+    additional_master_security_groups = aws_security_group.master.id
   }
 
   step {
