@@ -1,5 +1,7 @@
 include ../common.mk
 
+VARS=-var region=$(REGION) -var key_name=$(basename $(notdir $(KEYPAIR)))
+
 .PHONY: cluster terminate proxy
 
 all: cluster
@@ -7,11 +9,11 @@ all: cluster
 cluster:
 	@echo Creating EMR cluster
 	$(TF) init
-	$(TF) apply -var region=$(REGION) -var key_name=$(basename $(notdir $(KEYPAIR)))
+	$(TF) apply $(VARS)
 
 terminate:
 	@echo Terminating EMR cluster
-	$(TF) destroy
+	$(TF) destroy $(VARS)
 
 proxy:
 	@echo Setting up SOCKS proxy connection to cluster
