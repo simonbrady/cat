@@ -1,3 +1,3 @@
 data "aws_subnet" "master" {
-  id = "${var.subnet_id}"
+  id = var.subnet_id
 }
