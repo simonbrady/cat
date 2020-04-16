@@ -2,8 +2,8 @@
 
 # Settings shared across sub-projects
 REGION ?= us-east-1
-KEYPAIR ?= $(HOME)/keys/home-$(REGION).pem
-BUCKET ?= s3://ncdc.hikari.org.nz
+KEYPAIR ?= /path/to/keypair.pem
+BUCKET ?= s3://bucket
 CODE ?= $(BUCKET)/code
 CONTROL ?= $(BUCKET)/control
 DATA ?= $(BUCKET)/data
@@ -14,6 +14,7 @@ EMR=$(AWS) emr --region $(REGION)
 S3=$(AWS) s3
 GRADLE=gradle
 SED=sed
+SEQ=seq
 TF=terraform
 
 # Helper for AWS CLI commands that take a cluster ID
