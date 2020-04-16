@@ -1,7 +1,7 @@
 # Climate Analysis Tool
 
 This is an ongoing project of mine to build a web app fusing two non-trivial
-climate data sets, [NCDC ISD](http://www.ncdc.noaa.gov/isd) and
+climate datasets, [NCDC ISD](http://www.ncdc.noaa.gov/isd) and
 [CCAFS-CGIAR](http://www.ccafs-climate.org/). While the data is inherently
 interesting (at least to me), the main purpose of the project is to demonstrate
 a number of technologies I like working with:
@@ -29,13 +29,13 @@ who enjoy climbing onto my lap when I'm trying to code.
 
 ## Datasets
 
-The NCDC data comprises historic observations from (mostly fixed) weather
+The NCDC data consists of historic observations from (mostly fixed) weather
 stations around the world. The data runs from 1901 to the present day, but
-since I'm interested in annual trends I only take it up to the end of 2017.
+since I'm interested in annual trends I only take it up to the end of 2019.
 This is still large enough to be interesting, giving us a little over 3.1
-billion observations from around 32,000 stations.
+billion observations from around 31,000 stations.
 
-By contrast, the CCAFS data comprises global predictions for future climate.
+By contrast, the CCAFS dataset contains global predictions for future climate.
 The overall dataset is
 [huge](http://www.ccafs-climate.org/downloads/docs/mapping_data_ccafs-climate.pdf),
 so to keep things manageable I've decided to focus on the 19

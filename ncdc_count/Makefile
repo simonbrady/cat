@@ -2,7 +2,7 @@ include ../common.mk
 
 FROM ?= 1901
 TO ?= 1910
-INPUT ?= $(foreach year, $(shell $(SEQ) $(FROM) $(TO)), $(DATA)/$(year))
+INPUT ?= $(foreach year, $(shell seq $(FROM) $(TO)), $(DATA)/$(year))
 OUTPUT ?= $(BUCKET)/output/ncdc_count/$(FROM)-$(TO)
 
 .PHONY: build clean test upload count

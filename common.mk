@@ -14,7 +14,6 @@ EMR=$(AWS) emr --region $(REGION)
 S3=$(AWS) s3
 GRADLE=gradle
 SED=sed
-SEQ=seq
 TF=terraform
 
 # Helper for AWS CLI commands that take a cluster ID
