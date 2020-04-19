@@ -19,6 +19,10 @@ def status(msg):
     sys.stderr.write('%s %s\n' % (datetime.utcnow().isoformat(), msg))
     sys.stderr.write('reporter:status:%s\n' % msg)
 
+def fail(year, filename):
+    status('Failed to download %s/%s' % (year, filename))
+    sys.stderr.write('reporter:counter:NCDC Download Failures,%s,1\n' % year)
+
 ftp = connect(host)
 for line in sys.stdin:
     (year, filename) = line.strip().split()
@@ -35,7 +39,8 @@ for line in sys.stdin:
                     sys.stderr.write('Reconnection succeeded\n')
                 except ftplib.all_errors as error:
                     sys.stderr.write('%s\n' % error)
-                    sys.exit(1)
+                    fail(year, filename)
+                    break
             continue
         status('Decompressing file %s/%s' % (year, filename))
         count = 0
@@ -43,8 +48,8 @@ for line in sys.stdin:
             print('%s\t%s' % (year, record.decode('ISO-8859-1').strip()))
             count += 1
         os.remove(filename)
-        sys.stderr.write('reporter:counter:NCDC Download,%s,%d\n' % (year, count))
+        sys.stderr.write('reporter:counter:NCDC Download Records,%s,%d\n' % (year, count))
         break
     else:
-        sys.exit(1)
+        fail(year, filename)
 ftp.quit()
