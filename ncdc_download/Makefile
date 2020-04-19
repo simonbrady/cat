@@ -14,7 +14,7 @@ COPY_SOURCE ?= $(OUTPUT)
 COPY_DEST ?= /user/hadoop
 JAR=ncdc_download.jar
 
-.PHONY: build clean test upload download copy
+.PHONY: build clean test upload download copy stats
 
 all: build
 
@@ -57,3 +57,6 @@ copy:
 		-e "s|%COPY_SOURCE%|$(COPY_SOURCE)|" \
 		-e "s|%COPY_DEST%|$(COPY_DEST)|" \
 		copy_step.json)"
+
+stats:
+	seq $(FROM) $(TO) | $(PYTHON) src/main/python/ftp_stats.py > ftp_stats.csv

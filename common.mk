@@ -13,6 +13,7 @@ AWS=aws
 EMR=$(AWS) emr --region $(REGION)
 S3=$(AWS) s3
 GRADLE=gradle
+PYTHON=python3
 SED=sed
 TF=terraform
 
