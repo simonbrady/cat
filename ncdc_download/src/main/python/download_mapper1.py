@@ -12,7 +12,6 @@ for line in sys.stdin:
     year = line.strip()
     sys.stderr.write('reporter:status:Processing year %s\n' % year)
     ftp.cwd('%s/%s' % (base, year))
-    files = ftp.nlst()
-    for filename in files:
+    for filename in ftp.nlst():
         print('%s\t%s' % (year, filename))
 ftp.quit()
